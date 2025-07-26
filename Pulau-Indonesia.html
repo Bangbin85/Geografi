@@ -23,13 +23,13 @@
             --font-body: 'Mochiy Pop One', sans-serif;
             --white: #FFFFFF; /* Variabel dari halaman depan */
 
-            /* Find Word specific colors */
-            --word-grid-bg: #ecf0f1;
-            --word-cell-border: #bdc3c7;
-            --word-found-bg: #27ae60; /* Nephritis */
-            --word-highlight-bg: #f1c40f; /* Sunflower */
-            --word-list-item: #3498db; /* Peter River */
-            --word-list-found: #2ecc71; /* Emerald */
+            /* Find bangbin specific colors */
+            --bangbin-grid-bg: #ecf0f1;
+            --bangbin-cell-border: #bdc3c7;
+            --bangbin-found-bg: #27ae60; /* Nephritis */
+            --bangbin-highlight-bg: #f1c40f; /* Sunflower */
+            --bangbin-list-item: #3498db; /* Peter River */
+            --bangbin-list-found: #2ecc71; /* Emerald */
 
             /* Matching Game specific colors */
             --match-bg: #e0f7fa; /* Light Cyan */
@@ -152,9 +152,9 @@
         }
 
         #score-container-drag-drop { color: #27AE60; } /* Nephritis (Hijau) */
-        #timer-container-drag-drop, #timer-container-find-word, #timer-container-matching { color: #E74C3C; } /* Alizarin (Merah) */
+        #timer-container-drag-drop, #timer-container-find-bangbin, #timer-container-matching { color: #E74C3C; } /* Alizarin (Merah) */
         
-        #timer-container-drag-drop.warning, #timer-container-find-word.warning, #timer-container-matching.warning {
+        #timer-container-drag-drop.warning, #timer-container-find-bangbin.warning, #timer-container-matching.warning {
             color: #c0392b;
             animation: pulse 1s infinite;
         }
@@ -165,7 +165,7 @@
             100% { transform: scale(1); }
         }
 
-        #game-area-drag-drop, #game-area-find-word, #game-area-matching {
+        #game-area-drag-drop, #game-area-find-bangbin, #game-area-matching {
             display: none;
             flex-direction: column;
             align-items: center;
@@ -248,7 +248,7 @@
         #box-utara { background: #E67E22; } /* Carrot */
         #box-selatan-timur { background: #16A085; } /* Green Sea */
 
-        #feedback-drag-drop, #feedback-find-word, #feedback-matching, #feedback-puzzle {
+        #feedback-drag-drop, #feedback-find-bangbin, #feedback-matching, #feedback-puzzle {
             font-size: 1.8rem;
             font-weight: bold;
             height: 40px;
@@ -289,7 +289,7 @@
 
 /* --- Common End Screen Styles --- */
 #end-screen-drag-drop,
-#end-screen-find-word,
+#end-screen-find-bangbin,
 #end-screen-matching,
 #end-screen-puzzle {
     display: none; /* Hidden by default, shown by JS */
@@ -316,8 +316,8 @@
             to { transform: translateY(105vh) rotate(360deg); opacity: 0; }
         }
 
-        /* --- Find Word Game Specific Styles --- */
-        #find-word-game-layout {
+        /* --- Find bangbin Game Specific Styles --- */
+        #find-bangbin-game-layout {
             display: flex;
             flex-direction: row; /* Berdampingan secara horizontal */
             gap: 15px; /* Kurangi jarak antar grid dan daftar kata */
@@ -328,25 +328,25 @@
             max-width: 900px; /* Batasi lebar maksimum agar tidak terlalu menyebar di layar sangat lebar */
         }
 
-        #word-grid-container {
+        #bangbin-grid-container {
             flex: 2; /* Akan mengambil porsi lebih besar dari ruang yang tersedia */
             min-width: 250px; /* Sedikit kurangi min-width agar lebih fleksibel */
-            background-color: var(--word-grid-bg);
+            background-color: var(--bangbin-grid-bg);
             padding: 10px; /* Kurangi padding di container grid */
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
-        #word-grid {
+        #bangbin-grid {
             display: grid;
             /* Border langsung di grid, bukan di cell */
-            border: 2px solid var(--word-cell-border);
+            border: 2px solid var(--bangbin-cell-border);
             border-radius: 8px;
             overflow: hidden;
             /* Penting: Atur ukuran grid secara eksplisit atau biarkan clamp di cell yang bekerja */
         }
 
-        .word-cell {
+        .bangbin-cell {
             /* Gunakan ukuran tetap untuk cell agar konsisten */
             width: 35px; /* Atur ukuran tetap, bisa disesuaikan */
             height: 35px; /* Atur ukuran tetap, bisa disesuaikan */
@@ -354,7 +354,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 0.5px solid var(--word-cell-border); /* Kurangi ketebalan border cell */
+            border: 0.5px solid var(--bangbin-cell-border); /* Kurangi ketebalan border cell */
             font-family: var(--font-body);
             font-size: 1.3rem; /* Sesuaikan ukuran font agar pas */
             font-weight: bold;
@@ -364,7 +364,7 @@
             touch-action: none;
         }
 
-        #word-list-container {
+        #bangbin-list-container {
             flex: 1;
             max-width: 280px; /* Sesuaikan max-width */
             min-width: 180px; /* Sesuaikan min-width */
@@ -376,7 +376,7 @@
             margin-top: 0;
         }
 
-        #word-list {
+        #bangbin-list {
             list-style: none;
             padding: 0;
             display: flex;
@@ -385,17 +385,17 @@
             gap: 8px; /* Kurangi jarak antar kata di daftar */
         }
 
-        #word-list li {
+        #bangbin-list li {
             padding: 7px 12px; /* Sesuaikan padding */
             font-size: 1rem; /* Sesuaikan ukuran font */
         }
 
-        .word-cell.highlight {
-            background-color: var(--word-highlight-bg);
+        .bangbin-cell.highlight {
+            background-color: var(--bangbin-highlight-bg);
         }
 
-        .word-cell.found {
-            background-color: var(--word-found-bg);
+        .bangbin-cell.found {
+            background-color: var(--bangbin-found-bg);
             color: white;
             animation: found-animation 0.5s ease-out;
         }
@@ -406,7 +406,7 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        #word-list-container {
+        #bangbin-list-container {
             flex: 1; /* Akan mengambil porsi lebih kecil dari ruang yang tersedia */
             max-width: 300px; /* Batasi lebar daftar kata agar tidak terlalu lebar */
             min-width: 200px; /* Lebar minimum agar tidak terlalu sempit */
@@ -418,21 +418,21 @@
             margin-top: 0; /* Pastikan ini 0 saat berdampingan */
         }
 
-        #word-list li.found-word {
-            background-color: var(--word-list-found);
+        #bangbin-list li.found-bangbin {
+            background-color: var(--bangbin-list-found);
             text-decoration: line-through;
             opacity: 0.7;
         }
 
         /* Responsif untuk layar kecil */
         @media (max-width: 768px) {
-            #find-word-game-layout { /* Targetkan wrapper flexbox utama */
+            #find-bangbin-game-layout { /* Targetkan wrapper flexbox utama */
                 flex-direction: column; /* Ubah menjadi kolom pada layar kecil */
                 align-items: center; /* Pusatkan secara horizontal dalam mode kolom */
             }
 
-            #word-grid-container,
-            #word-list-container {
+            #bangbin-grid-container,
+            #bangbin-list-container {
                 flex: none; /* Nonaktifkan fleksibilitas lebar */
                 width: 100%; /* Ambil lebar penuh */
                 max-width: 400px; /* Batasi lebar total agar tidak terlalu lebar di tablet */
@@ -994,37 +994,37 @@
         </div>
 
 
-        <div id="start-screen-find-word" style="display: none;">
+        <div id="start-screen-find-bangbin" style="display: none;">
             <h1>Level 2: Pulau & Samudra</h1>
             <p style="font-size: 1.2rem;">Temukan semua nama pulau dan samudra yang tersembunyi di dalam kotak huruf. Klik dan seret untuk menandai kata!</p>
-            <button id="start-btn-find-word" class="btn-3d">Mulai!</button>
+            <button id="start-btn-find-bangbin" class="btn-3d">Mulai!</button>
         </div>
 
-        <div id="game-area-find-word" style="display: none;">
-            <div id="game-info-find-word" class="game-info">
-                <div id="words-found-container">Ditemukan: <span id="words-found-count">0</span> / <span id="total-words-count"></span></div>
-                <div id="timer-container-find-word">Waktu: <span id="time-find-word"></span></div>
+        <div id="game-area-find-bangbin" style="display: none;">
+            <div id="game-info-find-bangbin" class="game-info">
+                <div id="bangbins-found-container">Ditemukan: <span id="bangbins-found-count">0</span> / <span id="total-bangbins-count"></span></div>
+                <div id="timer-container-find-bangbin">Waktu: <span id="time-find-bangbin"></span></div>
             </div>
             
-            <div id="find-word-game-layout">
-                <div id="word-grid-container">
-                    <div id="word-grid"></div>
+            <div id="find-bangbin-game-layout">
+                <div id="bangbin-grid-container">
+                    <div id="bangbin-grid"></div>
                 </div>
-                <div id="word-list-container">
+                <div id="bangbin-list-container">
                     <h3>Daftar Kata:</h3>
-                    <ul id="word-list"></ul>
+                    <ul id="bangbin-list"></ul>
                 </div>
             </div>
-            <div id="feedback-find-word"></div>
+            <div id="feedback-find-bangbin"></div>
         </div>
 
-        <div id="end-screen-find-word" style="display: none;">
+        <div id="end-screen-find-bangbin" style="display: none;">
             <h1>Permainan Selesai!</h1>
-            <h2 id="final-title-find-word"></h2>
-            <h2 id="final-words-found" style="color: #007bff; font-size: 4rem;">0</h2>
-            <p id="final-message-find-word" style="font-size: 1.2rem;"></p>
+            <h2 id="final-title-find-bangbin"></h2>
+            <h2 id="final-bangbins-found" style="color: #007bff; font-size: 4rem;">0</h2>
+            <p id="final-message-find-bangbin" style="font-size: 1.2rem;"></p>
             <button id="next-level-btn-matching" class="btn-3d" style="display: none;">Lanjut ke Level 3</button>
-            <button id="restart-btn-find-word" class="btn-3d" style="display: none;">Main Lagi</button>
+            <button id="restart-btn-find-bangbin" class="btn-3d" style="display: none;">Main Lagi</button>
             <a href="https://sites.google.com/view/bangbinedu/home" target="_blank"><button class="btn-3d"><i class="fa fa-home"></i></button></a>
         </div>
 
@@ -1156,7 +1156,7 @@
 
 
 // --- Puzzle Game Variables ---
-const PUZZLE_IMAGE_URL = "https://cdn-icons-png.flaticon.com/512/4915/4915691.png";
+const PUZZLE_IMAGE_URL = "https://id.wikipedia.org/wiki/Berkas:Borneo_Topography.png";
 const PUZZLE_DURATION = 120; // 2 minutes
 let puzzleTiles = [];
 let emptyPuzzleIndex = 8;
@@ -1407,9 +1407,9 @@ function endGamePuzzle(reason) {
         const nextLevelBtn = document.getElementById('next-level-btn');
         const restartBtnDragDrop = document.getElementById('restart-btn-drag-drop');
 
-        const startScreenFindWord = document.getElementById('start-screen-find-word');
-        const gameAreaFindWord = document.getElementById('game-area-find-word');
-        const endScreenFindWord = document.getElementById('end-screen-find-word');
+        const startScreenFindbangbin = document.getElementById('start-screen-find-bangbin');
+        const gameAreaFindbangbin = document.getElementById('game-area-find-bangbin');
+        const endScreenFindbangbin = document.getElementById('end-screen-find-bangbin');
         const nextLevelBtnMatching = document.getElementById('next-level-btn-matching');
 
         const startScreenMatching = document.getElementById('start-screen-matching');
@@ -1425,9 +1425,9 @@ function endGamePuzzle(reason) {
             startScreenDragDrop.style.display = 'none';
             gameAreaDragDrop.style.display = 'none';
             endScreenDragDrop.style.display = 'none';
-            startScreenFindWord.style.display = 'none';
-            gameAreaFindWord.style.display = 'none';
-            endScreenFindWord.style.display = 'none';
+            startScreenFindbangbin.style.display = 'none';
+            gameAreaFindbangbin.style.display = 'none';
+            endScreenFindbangbin.style.display = 'none';
             startScreenMatching.style.display = 'none';
             gameAreaMatching.style.display = 'none';
             endScreenMatching.style.display = 'none';
@@ -1437,7 +1437,7 @@ function endGamePuzzle(reason) {
 			
 
             clearInterval(timerDragDrop);
-            clearInterval(timerFindWord);
+            clearInterval(timerFindbangbin);
             clearInterval(timerMatching);
 			clearInterval(puzzleTimer);
         }
@@ -1667,59 +1667,59 @@ function endGamePuzzle(reason) {
             }
         }
 
-        // --- Find Word Game Logic (Level 2) ---
-        const WORDS_TO_FIND = [
+        // --- Find bangbin Game Logic (Level 2) ---
+        const bangbinS_TO_FIND = [
             "SUMATERA", "JAWA", "KALIMANTAN", "SULAWESI", 
             "PAPUA", "HINDIA", "BALI", "MALUKU"
         ];
         const GRID_SIZE = 12;
-        const GAME_DURATION_FIND_WORD = 120;
+        const GAME_DURATION_FIND_bangbin = 120;
 
-        const startBtnFindWord = document.getElementById('start-btn-find-word');
-        const restartBtnFindWord = document.getElementById('restart-btn-find-word');
-        const actualWordGrid = document.querySelector('#word-grid-container #word-grid');
-        const actualWordList = document.querySelector('#word-list-container #word-list');
-        const wordsFoundCountEl = document.getElementById('words-found-count');
-        const totalWordsCountEl = document.getElementById('total-words-count');
-        const timeElFindWord = document.getElementById('time-find-word');
-        const timerContainerFindWord = document.getElementById('timer-container-find-word');
-        const feedbackElFindWord = document.getElementById('feedback-find-word');
-        const finalTitleFindWord = document.getElementById('final-title-find-word');
-        const finalWordsFoundEl = document.getElementById('final-words-found');
-        const finalMessageFindWord = document.getElementById('final-message-find-word');
+        const startBtnFindbangbin = document.getElementById('start-btn-find-bangbin');
+        const restartBtnFindbangbin = document.getElementById('restart-btn-find-bangbin');
+        const actualbangbinGrid = document.querySelector('#bangbin-grid-container #bangbin-grid');
+        const actualbangbinList = document.querySelector('#bangbin-list-container #bangbin-list');
+        const bangbinsFoundCountEl = document.getElementById('bangbins-found-count');
+        const totalbangbinsCountEl = document.getElementById('total-bangbins-count');
+        const timeElFindbangbin = document.getElementById('time-find-bangbin');
+        const timerContainerFindbangbin = document.getElementById('timer-container-find-bangbin');
+        const feedbackElFindbangbin = document.getElementById('feedback-find-bangbin');
+        const finalTitleFindbangbin = document.getElementById('final-title-find-bangbin');
+        const finalbangbinsFoundEl = document.getElementById('final-bangbins-found');
+        const finalMessageFindbangbin = document.getElementById('final-message-find-bangbin');
 
         let grid = [];
-        let foundWords = new Set();
+        let foundbangbins = new Set();
         let currentSelection = [];
         let isSelecting = false;
-        let timerFindWord, timeLeftFindWord;
+        let timerFindbangbin, timeLeftFindbangbin;
         let startCellCoords = null; 
 
-        restartBtnFindWord.addEventListener('click', () => { playSound('click'); startGameFindWord(); });
+        restartBtnFindbangbin.addEventListener('click', () => { playSound('click'); startGameFindbangbin(); });
         nextLevelBtnMatching.addEventListener('click', () => { initAudio(); playSound('click'); startLevel3(); });
 
         function startLevel2() {
             hideAllGameScreens();
             mainContainer.style.display = 'flex';
-            startScreenFindWord.style.display = 'block';
+            startScreenFindbangbin.style.display = 'block';
         }
 
-        startBtnFindWord.addEventListener('click', () => { initAudio(); playSound('click'); startGameFindWord(); });
+        startBtnFindbangbin.addEventListener('click', () => { initAudio(); playSound('click'); startGameFindbangbin(); });
 
-        function startGameFindWord() {
-            foundWords.clear();
-            wordsFoundCountEl.innerText = 0;
-            totalWordsCountEl.innerText = WORDS_TO_FIND.length;
-            feedbackElFindWord.innerText = "";
+        function startGameFindbangbin() {
+            foundbangbins.clear();
+            bangbinsFoundCountEl.innerText = 0;
+            totalbangbinsCountEl.innerText = bangbinS_TO_FIND.length;
+            feedbackElFindbangbin.innerText = "";
             animationContainer.innerHTML = '';
             
             hideAllGameScreens();
             mainContainer.style.display = 'flex';
-            gameAreaFindWord.style.display = 'flex';
+            gameAreaFindbangbin.style.display = 'flex';
 
             setupGrid();
-            displayWordList();
-            startTimerFindWord();
+            displaybangbinList();
+            startTimerFindbangbin();
         }
 
         function formatTime(seconds) {
@@ -1728,37 +1728,37 @@ function endGamePuzzle(reason) {
             return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
         }
 
-        function startTimerFindWord() {
-            timeLeftFindWord = GAME_DURATION_FIND_WORD;
-            timeElFindWord.innerText = formatTime(timeLeftFindWord);
-            timerContainerFindWord.classList.remove('warning');
-            clearInterval(timerFindWord);
-            timerFindWord = setInterval(() => {
-                timeLeftFindWord--;
-                timeElFindWord.innerText = formatTime(timeLeftFindWord);
-                if (timeLeftFindWord <= 10 && timeLeftFindWord > 0) {
-                    timerContainerFindWord.classList.add('warning');
+        function startTimerFindbangbin() {
+            timeLeftFindbangbin = GAME_DURATION_FIND_bangbin;
+            timeElFindbangbin.innerText = formatTime(timeLeftFindbangbin);
+            timerContainerFindbangbin.classList.remove('warning');
+            clearInterval(timerFindbangbin);
+            timerFindbangbin = setInterval(() => {
+                timeLeftFindbangbin--;
+                timeElFindbangbin.innerText = formatTime(timeLeftFindbangbin);
+                if (timeLeftFindbangbin <= 10 && timeLeftFindbangbin > 0) {
+                    timerContainerFindbangbin.classList.add('warning');
                     playSound('tick');
                 }
-                if (timeLeftFindWord <= 0) {
-                    clearInterval(timerFindWord);
-                    endGameFindWord('timeup');
+                if (timeLeftFindbangbin <= 0) {
+                    clearInterval(timerFindbangbin);
+                    endGameFindbangbin('timeup');
                 }
             }, 1000);
         }
 
         function setupGrid() {
             grid = Array(GRID_SIZE).fill(0).map(() => Array(GRID_SIZE).fill(''));
-            actualWordGrid.innerHTML = '';
-            actualWordGrid.style.gridTemplateColumns = `repeat(${GRID_SIZE}, 1fr)`;
+            actualbangbinGrid.innerHTML = '';
+            actualbangbinGrid.style.gridTemplateColumns = `repeat(${GRID_SIZE}, 1fr)`;
 
-            placeWordsInGrid();
+            placebangbinsInGrid();
             fillEmptyCells();
 
             for (let r = 0; r < GRID_SIZE; r++) {
                 for (let c = 0; c < GRID_SIZE; c++) {
                     const cell = document.createElement('div');
-                    cell.classList.add('word-cell');
+                    cell.classList.add('bangbin-cell');
                     cell.dataset.row = r;
                     cell.dataset.col = c;
                     cell.innerText = grid[r][c];
@@ -1771,7 +1771,7 @@ function endGamePuzzle(reason) {
                     cell.addEventListener('touchmove', onCellTouchMove, { passive: false });
                     cell.addEventListener('touchend', onCellTouchEnd);
 
-                    actualWordGrid.appendChild(cell);
+                    actualbangbinGrid.appendChild(cell);
                 }
             }
 
@@ -1779,13 +1779,13 @@ function endGamePuzzle(reason) {
             document.addEventListener('touchend', onGlobalTouchEnd);
         }
 
-        function displayWordList() {
-            actualWordList.innerHTML = '';
-            WORDS_TO_FIND.forEach(word => {
+        function displaybangbinList() {
+            actualbangbinList.innerHTML = '';
+            bangbinS_TO_FIND.forEach(bangbin => {
                 const li = document.createElement('li');
-                li.innerText = word;
-                li.id = `word-list-${word.toLowerCase().replace(/\s/g, '')}`;
-                actualWordList.appendChild(li);
+                li.innerText = bangbin;
+                li.id = `bangbin-list-${bangbin.toLowerCase().replace(/\s/g, '')}`;
+                actualbangbinList.appendChild(li);
             });
         }
 
@@ -1794,7 +1794,7 @@ function endGamePuzzle(reason) {
             return alphabet[Math.floor(Math.random() * alphabet.length)];
         }
 
-        function placeWordsInGrid() {
+        function placebangbinsInGrid() {
             const directions = [
                 { dr: 0, dc: 1 },    // Horizontal (kiri ke kanan)
                 { dr: 1, dc: 0 },    // Vertical (atas ke bawah)
@@ -1806,26 +1806,26 @@ function endGamePuzzle(reason) {
                 { dr: -1, dc: -1 }   // Diagonal (kiri atas)
             ];
 
-            const shuffledWords = [...WORDS_TO_FIND].sort(() => Math.random() - 0.5);
+            const shuffledbangbins = [...bangbinS_TO_FIND].sort(() => Math.random() - 0.5);
 
             grid = Array(GRID_SIZE).fill(0).map(() => Array(GRID_SIZE).fill(''));
 
-            shuffledWords.forEach(word => {
-                const cleanWord = word.replace(/\s/g, '').toUpperCase();
+            shuffledbangbins.forEach(bangbin => {
+                const cleanbangbin = bangbin.replace(/\s/g, '').toUpperCase();
                 let placed = false;
                 let attempts = 0;
-                const maxAttemptsPerWord = 1000;
+                const maxAttemptsPerbangbin = 1000;
 
-                while (!placed && attempts < maxAttemptsPerWord) {
+                while (!placed && attempts < maxAttemptsPerbangbin) {
                     const startRow = Math.floor(Math.random() * GRID_SIZE);
                     const startCol = Math.floor(Math.random() * GRID_SIZE);
                     const dir = directions[Math.floor(Math.random() * directions.length)];
 
-                    if (canPlaceWord(cleanWord, startRow, startCol, dir)) {
-                        for (let i = 0; i < cleanWord.length; i++) {
+                    if (canPlacebangbin(cleanbangbin, startRow, startCol, dir)) {
+                        for (let i = 0; i < cleanbangbin.length; i++) {
                             const r = startRow + i * dir.dr;
                             const c = startCol + i * dir.dc;
-                            grid[r][c] = cleanWord[i];
+                            grid[r][c] = cleanbangbin[i];
                         }
                         placed = true;
                     }
@@ -1834,8 +1834,8 @@ function endGamePuzzle(reason) {
             });
         }
 
-        function canPlaceWord(word, startRow, startCol, dir) {
-            for (let i = 0; i < word.length; i++) {
+        function canPlacebangbin(bangbin, startRow, startCol, dir) {
+            for (let i = 0; i < bangbin.length; i++) {
                 const r = startRow + i * dir.dr;
                 const c = startCol + i * dir.dc;
 
@@ -1843,7 +1843,7 @@ function endGamePuzzle(reason) {
                     return false;
                 }
 
-                if (grid[r][c] !== '' && grid[r][c] !== word[i]) {
+                if (grid[r][c] !== '' && grid[r][c] !== bangbin[i]) {
                     return false;
                 }
             }
@@ -1910,13 +1910,13 @@ function endGamePuzzle(reason) {
 
 
         function highlightSelection() {
-            document.querySelectorAll('.word-cell').forEach(cell => {
+            document.querySelectorAll('.bangbin-cell').forEach(cell => {
                 if (!cell.classList.contains('found')) {
                     cell.classList.remove('highlight');
                 }
             });
             currentSelection.forEach(pos => {
-                const cell = document.querySelector(`.word-cell[data-row="${pos.row}"][data-col="${pos.col}"]`);
+                const cell = document.querySelector(`.bangbin-cell[data-row="${pos.row}"][data-col="${pos.col}"]`);
                 if (cell && !cell.classList.contains('found')) {
                     cell.classList.add('highlight');
                 }
@@ -1924,7 +1924,7 @@ function endGamePuzzle(reason) {
         }
 
         function unhighlightAll() {
-            document.querySelectorAll('.word-cell').forEach(cell => {
+            document.querySelectorAll('.bangbin-cell').forEach(cell => {
                 cell.classList.remove('highlight');
             });
         }
@@ -1932,7 +1932,7 @@ function endGamePuzzle(reason) {
         function onCellMouseUp(e) {
             if (isSelecting) {
                 isSelecting = false;
-                checkWord();
+                checkbangbin();
                 currentSelection = [];
                 startCellCoords = null;
                 unhighlightAll();
@@ -1942,7 +1942,7 @@ function endGamePuzzle(reason) {
         function onGlobalMouseUp(e) {
             if (isSelecting) {
                 isSelecting = false;
-                checkWord();
+                checkbangbin();
                 currentSelection = [];
                 startCellCoords = null; 
                 unhighlightAll();
@@ -1965,7 +1965,7 @@ function endGamePuzzle(reason) {
             e.preventDefault();
             const touch = e.touches[0];
             const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
-            const cell = targetElement ? targetElement.closest('.word-cell') : null;
+            const cell = targetElement ? targetElement.closest('.bangbin-cell') : null;
 
             if (cell) {
                 const row = parseInt(cell.dataset.row);
@@ -1984,7 +1984,7 @@ function endGamePuzzle(reason) {
         function onCellTouchEnd(e) {
             if (isSelecting) {
                 isSelecting = false;
-                checkWord();
+                checkbangbin();
                 currentSelection = [];
                 startCellCoords = null; 
                 unhighlightAll();
@@ -1994,85 +1994,85 @@ function endGamePuzzle(reason) {
         function onGlobalTouchEnd(e) {
             if (isSelecting) {
                 isSelecting = false;
-                checkWord();
+                checkbangbin();
                 currentSelection = [];
                 startCellCoords = null; 
                 unhighlightAll();
             }
         }
 
-        function checkWord() {
+        function checkbangbin() {
             if (currentSelection.length === 0) return;
 
-            let selectedWord = "";
+            let selectedbangbin = "";
             currentSelection.forEach(pos => {
-                selectedWord += grid[pos.row][pos.col];
+                selectedbangbin += grid[pos.row][pos.col];
             });
 
-            const reversedSelectedWord = selectedWord.split('').reverse().join('');
+            const reversedSelectedbangbin = selectedbangbin.split('').reverse().join('');
 
             let foundExactMatch = false;
-            let wordIndex = -1;
+            let bangbinIndex = -1;
 
-            for (let i = 0; i < WORDS_TO_FIND.length; i++) {
-                const targetWord = WORDS_TO_FIND[i].replace(/\s/g, '').toUpperCase();
-                if (targetWord === selectedWord || targetWord === reversedSelectedWord) {
+            for (let i = 0; i < bangbinS_TO_FIND.length; i++) {
+                const targetbangbin = bangbinS_TO_FIND[i].replace(/\s/g, '').toUpperCase();
+                if (targetbangbin === selectedbangbin || targetbangbin === reversedSelectedbangbin) {
                     foundExactMatch = true;
-                    wordIndex = i;
+                    bangbinIndex = i;
                     break;
                 }
             }
 
-            if (foundExactMatch && !foundWords.has(WORDS_TO_FIND[wordIndex])) {
+            if (foundExactMatch && !foundbangbins.has(bangbinS_TO_FIND[bangbinIndex])) {
                 playSound('correct');
-                feedbackElFindWord.innerText = `Kata "${WORDS_TO_FIND[wordIndex]}" ditemukan!`;
-                feedbackElFindWord.style.color = '#28a745';
-                foundWords.add(WORDS_TO_FIND[wordIndex]);
-                wordsFoundCountEl.innerText = foundWords.size;
+                feedbackElFindbangbin.innerText = `Kata "${bangbinS_TO_FIND[bangbinIndex]}" ditemukan!`;
+                feedbackElFindbangbin.style.color = '#28a745';
+                foundbangbins.add(bangbinS_TO_FIND[bangbinIndex]);
+                bangbinsFoundCountEl.innerText = foundbangbins.size;
                 
                 currentSelection.forEach(pos => {
-                    const cell = document.querySelector(`.word-cell[data-row="${pos.row}"][data-col="${pos.col}"]`);
+                    const cell = document.querySelector(`.bangbin-cell[data-row="${pos.row}"][data-col="${pos.col}"]`);
                     if (cell) {
                         cell.classList.add('found');
                         cell.classList.remove('highlight');
                     }
                 });
 
-                const listItem = document.getElementById(`word-list-${WORDS_TO_FIND[wordIndex].toLowerCase().replace(/\s/g, '')}`);
+                const listItem = document.getElementById(`bangbin-list-${bangbinS_TO_FIND[bangbinIndex].toLowerCase().replace(/\s/g, '')}`);
                 if (listItem) {
-                    listItem.classList.add('found-word');
+                    listItem.classList.add('found-bangbin');
                 }
 
-                if (foundWords.size === WORDS_TO_FIND.length) {
-                    clearInterval(timerFindWord);
-                    setTimeout(() => endGameFindWord('win'), 500);
+                if (foundbangbins.size === bangbinS_TO_FIND.length) {
+                    clearInterval(timerFindbangbin);
+                    setTimeout(() => endGameFindbangbin('win'), 500);
                 }
-            } else if (selectedWord.length > 1) {
+            } else if (selectedbangbin.length > 1) {
                 playSound('wrong');
-                feedbackElFindWord.innerText = "Bukan kata yang dicari!";
-                feedbackElFindWord.style.color = '#dc3545';
+                feedbackElFindbangbin.innerText = "Bukan kata yang dicari!";
+                feedbackElFindbangbin.style.color = '#dc3545';
             }
-            setTimeout(() => { feedbackElFindWord.innerText = "" }, 1500);
+            setTimeout(() => { feedbackElFindbangbin.innerText = "" }, 1500);
         }
 
-        function endGameFindWord(reason) {
-            gameAreaFindWord.style.display = 'none';
-            endScreenFindWord.style.display = 'block';
-            finalWordsFoundEl.innerText = `${foundWords.size} / ${WORDS_TO_FIND.length}`;
+        function endGameFindbangbin(reason) {
+            gameAreaFindbangbin.style.display = 'none';
+            endScreenFindbangbin.style.display = 'block';
+            finalbangbinsFoundEl.innerText = `${foundbangbins.size} / ${bangbinS_TO_FIND.length}`;
             
             if (reason === 'timeup') {
                 playSound('wrong');
-                finalTitleFindWord.innerText = "Waktu Habis!";
-                finalMessageFindWord.innerText = "Waktunya habis! Coba lagi untuk menemukan semua kata.";
+                finalTitleFindbangbin.innerText = "Waktu Habis!";
+                finalMessageFindbangbin.innerText = "Waktunya habis! Coba lagi untuk menemukan semua kata.";
                 nextLevelBtnMatching.style.display = 'none';
-                restartBtnFindWord.style.display = 'inline-block';
+                restartBtnFindbangbin.style.display = 'inline-block';
             } else if (reason === 'win') {
                 playSound('level_up');
-                finalTitleFindWord.innerText = "Level 2 Berhasil!";
-                finalMessageFindWord.innerText = "Kamu berhasil menemukan semua kata tersembunyi! Mari lanjutkan ke Level 3!";
+                finalTitleFindbangbin.innerText = "Level 2 Berhasil!";
+                finalMessageFindbangbin.innerText = "Kamu berhasil menemukan semua kata tersembunyi! Mari lanjutkan ke Level 3!";
                 createFallingStars();
                 nextLevelBtnMatching.style.display = 'inline-block';
-                restartBtnFindWord.style.display = 'none';
+                restartBtnFindbangbin.style.display = 'none';
             }
         }
 
