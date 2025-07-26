@@ -1,0 +1,2461 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Letak Geografis Indonesia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Mochiy+Pop+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+	<link rel="icon" type="image/x-icon" href="https://lh3.googleusercontent.com/d/1_4llqCMNoBDmwDHsI7RYsCM6rSK5wEjw">
+    <style>
+        :root {
+            --container-bg: rgba(255, 255, 255, 0.4); /* 80% opacity */
+            --card-bg: #FFFACD; /* LemonChiffon */
+            --card-border: #FFD700; /* Gold */
+            --text-color: #34495E;
+            --title-color: #C0392B; /* Pomegranate (Merah) */
+            --btn-bg: #2980B9; /* Belize Hole (Biru) */
+            --btn-shadow: #2471A3; /* Darker Blue */
+            --font-title: 'Lilita One', cursive;
+            --font-body: 'Mochiy Pop One', sans-serif;
+            --white: #FFFFFF; /* Variabel dari halaman depan */
+
+            /* Find Word specific colors */
+            --word-grid-bg: #ecf0f1;
+            --word-cell-border: #bdc3c7;
+            --word-found-bg: #27ae60; /* Nephritis */
+            --word-highlight-bg: #f1c40f; /* Sunflower */
+            --word-list-item: #3498db; /* Peter River */
+            --word-list-found: #2ecc71; /* Emerald */
+
+            /* Matching Game specific colors */
+            --match-bg: #e0f7fa; /* Light Cyan */
+            --match-card-bg: #bbdefb; /* Light Blue */
+            --match-card-border: #2196f3; /* Blue */
+            --match-drop-bg: #e0e0e0; /* Grey */
+            --match-drop-border: #757575; /* Dark Grey */
+            --match-correct-bg: #a5d6a7; /* Light Green */
+            --match-incorrect-bg: #ef9a9a; /* Light Red */
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #A7D7F9, #FFDDC1); /* Sky Blue to Peach */
+            color: var(--text-color);
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0; /* Ubah padding menjadi 0 agar elemen bisa penuh layar */
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow: hidden; /* Penting untuk mencegah scroll */
+            background-color: #f0f0f0; /* Warna fallback jika canvas belum terload */
+        }
+
+        #main-container {
+            max-width: 1000px;
+            width: 100%;
+            background: var(--container-bg);
+            padding: 20px 30px;
+            border-radius: 25px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            border: 5px solid white;
+            position: relative;
+            z-index: 10; /* Pastikan konten game di atas canvas latar belakang */
+            display: none; /* Sembunyikan main-container secara default */
+        }
+
+        /* Gaya dari halaman depan */
+        canvas#numberCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            display: block;
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            font-family: var(--font-title);
+            color: var(--title-color);
+            font-size: clamp(2.5rem, 7vw, 3.5rem);
+            text-shadow: 2px 2px 0px white, 4px 4px 0px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            font-family: var(--font-title);
+            color: #5D9CEC;
+        }
+
+        /* Styles for welcome screen elements */
+        #welcome-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100vh; /* Pastikan welcome-screen mengambil tinggi penuh viewport */
+            position: relative; /* Penting agar z-index bekerja */
+            z-index: 1; /* Di atas canvas dan bubbles */
+            padding: 15px; /* Tambahkan padding agar konten tidak mepet tepi */
+            box-sizing: border-box; /* Pastikan padding dihitung dalam lebar/tinggi */
+        }
+
+        #welcome-screen h1 { /* Override for welcome screen title */
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(3rem, 5vw, 4rem); /* Sesuaikan ukuran font agar lebih pas dengan gambar */
+            color: #d9534f;
+            text-shadow:
+                -4px -4px 0 var(--white),
+                4px -4px 0 var(--white),
+                -4px 4px 0 var(--white),
+                4px 4px 0 var(--white),
+                0 -4px 0 var(--white),
+                0 4px 0 var(--white),
+                -4px 0 0 var(--white),
+                4px 0 0 var(--white),
+                6px 6px 0 #000000;
+            margin-bottom: 0;
+        }
+
+        #welcome-screen h2 {
+            font-family: 'Fredoka One', cursive;
+            color: black;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        #welcome-screen p {
+            font-size: 1.2rem;
+            color: #34495e;
+            margin-top: -10px;
+            margin-bottom: 40px;
+        }
+
+        .game-info { /* Reusable class for game info */
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 20px;
+            font-family: var(--font-title);
+            font-size: 1.5rem;
+        }
+
+        #score-container-drag-drop { color: #27AE60; } /* Nephritis (Hijau) */
+        #timer-container-drag-drop, #timer-container-find-word, #timer-container-matching { color: #E74C3C; } /* Alizarin (Merah) */
+        
+        #timer-container-drag-drop.warning, #timer-container-find-word.warning, #timer-container-matching.warning {
+            color: #c0392b;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        #game-area-drag-drop, #game-area-find-word, #game-area-matching {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+        #statements-container {
+            background-color: rgba(236, 240, 241, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px dashed #bdc3c7;
+            width: 100%;
+        }
+        
+        #cards-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            min-height: 50px;
+        }
+
+        .statement-card {
+            background-color: var(--card-bg);
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: 3px solid var(--card-border);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            cursor: grab;
+            font-size: 1.1rem; /* Disesuaikan untuk teks nama */
+            transition: transform 0.2s, box-shadow 0.2s;
+            touch-action: none;
+        }
+
+        .dragging {
+            opacity: 0.7;
+            cursor: grabbing;
+            transform: scale(1.1);
+            position: fixed !important;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        #categories-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .category-box {
+            width: 250px;
+            min-height: 180px;
+            padding: 20px;
+            border-radius: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .category-box.drag-over {
+            transform: scale(1.08) translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.2);
+        }
+        
+        .category-box h2 {
+            font-family: var(--font-title);
+            margin-top: 0;
+            color: white;
+            text-shadow: 2px 2px 3px rgba(0,0,0,0.3);
+            pointer-events: none;
+        }
+
+        /* Warna Baru untuk Kategori Geografis */
+        #box-astronomis { background: #880808; } /* Maroon */
+        #box-utara { background: #E67E22; } /* Carrot */
+        #box-selatan-timur { background: #16A085; } /* Green Sea */
+
+        #feedback-drag-drop, #feedback-find-word, #feedback-matching, #feedback-puzzle {
+            font-size: 1.8rem;
+            font-weight: bold;
+            height: 40px;
+            font-family: var(--font-title);
+            margin-top: 15px;
+        }
+        
+        .btn-3d {
+            background-color: var(--btn-bg);
+            color: white;
+            font-family: var(--font-title);
+            font-size: 1.8rem;
+            border: none;
+            border-radius: 15px;
+            padding: 15px 35px;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+            box-shadow: 0 6px 0 var(--btn-shadow);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .btn-3d:hover { transform: translateY(-2px); box-shadow: 0 8px 0 var(--btn-shadow); }
+        .btn-3d:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--btn-shadow); }
+        
+        #end-animation-container {
+            position: fixed;
+            justify-content: center;
+            align-items: center;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 9999;
+        }
+
+/* --- Common End Screen Styles --- */
+#end-screen-drag-drop,
+#end-screen-find-word,
+#end-screen-matching,
+#end-screen-puzzle {
+    display: none; /* Hidden by default, shown by JS */
+    flex-direction: column;
+    justify-content: center; /* Vertically center content */
+    align-items: center; /* Horizontally center content */
+    width: 100%;
+    height: 100%; /* Take full height of main-container */
+    text-align: center;
+    box-sizing: border-box; /* Include padding in dimensions */
+    padding: 20px; /* Add some padding */
+}
+
+        .star {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50,0 L61.8,38.2 L100,38.2 L69.1,61.8 L80.9,100 L50,76.4 L19.1,100 L30.9,61.8 L0,38.2 L38.2,38.2 Z" fill="%23FFD700"/></svg>');
+            background-size: contain;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- Find Word Game Specific Styles --- */
+        #find-word-game-layout {
+            display: flex;
+            flex-direction: row; /* Berdampingan secara horizontal */
+            gap: 15px; /* Kurangi jarak antar grid dan daftar kata */
+            justify-content: center;
+            align-items: flex-start; /* Sejajarkan ke atas */
+            width: 100%;
+            flex-wrap: wrap; /* Izinkan pindah baris di layar kecil */
+            max-width: 900px; /* Batasi lebar maksimum agar tidak terlalu menyebar di layar sangat lebar */
+        }
+
+        #word-grid-container {
+            flex: 2; /* Akan mengambil porsi lebih besar dari ruang yang tersedia */
+            min-width: 250px; /* Sedikit kurangi min-width agar lebih fleksibel */
+            background-color: var(--word-grid-bg);
+            padding: 10px; /* Kurangi padding di container grid */
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        #word-grid {
+            display: grid;
+            /* Border langsung di grid, bukan di cell */
+            border: 2px solid var(--word-cell-border);
+            border-radius: 8px;
+            overflow: hidden;
+            /* Penting: Atur ukuran grid secara eksplisit atau biarkan clamp di cell yang bekerja */
+        }
+
+        .word-cell {
+            /* Gunakan ukuran tetap untuk cell agar konsisten */
+            width: 35px; /* Atur ukuran tetap, bisa disesuaikan */
+            height: 35px; /* Atur ukuran tetap, bisa disesuaikan */
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 0.5px solid var(--word-cell-border); /* Kurangi ketebalan border cell */
+            font-family: var(--font-body);
+            font-size: 1.3rem; /* Sesuaikan ukuran font agar pas */
+            font-weight: bold;
+            cursor: pointer;
+            background-color: white;
+            transition: background-color 0.1s ease-in-out;
+            touch-action: none;
+        }
+
+        #word-list-container {
+            flex: 1;
+            max-width: 280px; /* Sesuaikan max-width */
+            min-width: 180px; /* Sesuaikan min-width */
+            background-color: rgba(236, 240, 241, 0.7);
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px dashed #bdc3c7;
+            width: 100%;
+            margin-top: 0;
+        }
+
+        #word-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px; /* Kurangi jarak antar kata di daftar */
+        }
+
+        #word-list li {
+            padding: 7px 12px; /* Sesuaikan padding */
+            font-size: 1rem; /* Sesuaikan ukuran font */
+        }
+
+        .word-cell.highlight {
+            background-color: var(--word-highlight-bg);
+        }
+
+        .word-cell.found {
+            background-color: var(--word-found-bg);
+            color: white;
+            animation: found-animation 0.5s ease-out;
+        }
+
+        @keyframes found-animation {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #word-list-container {
+            flex: 1; /* Akan mengambil porsi lebih kecil dari ruang yang tersedia */
+            max-width: 300px; /* Batasi lebar daftar kata agar tidak terlalu lebar */
+            min-width: 200px; /* Lebar minimum agar tidak terlalu sempit */
+            background-color: rgba(236, 240, 241, 0.7);
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px dashed #bdc3c7;
+            width: 100%; /* Penting untuk flex-wrap */
+            margin-top: 0; /* Pastikan ini 0 saat berdampingan */
+        }
+
+        #word-list li.found-word {
+            background-color: var(--word-list-found);
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        /* Responsif untuk layar kecil */
+        @media (max-width: 768px) {
+            #find-word-game-layout { /* Targetkan wrapper flexbox utama */
+                flex-direction: column; /* Ubah menjadi kolom pada layar kecil */
+                align-items: center; /* Pusatkan secara horizontal dalam mode kolom */
+            }
+
+            #word-grid-container,
+            #word-list-container {
+                flex: none; /* Nonaktifkan fleksibilitas lebar */
+                width: 100%; /* Ambil lebar penuh */
+                max-width: 400px; /* Batasi lebar total agar tidak terlalu lebar di tablet */
+            }
+        }
+        
+        /* --- Matching Game Specific Styles (Level 3) --- */
+        #matching-game-layout {
+            display: flex;
+            flex-direction: column; /* Default to column for small screens */
+            gap: 20px;
+            justify-content: center;
+            align-items: center; /* Center items in column layout */
+            width: 100%;
+            flex-wrap: wrap; /* Allow wrapping */
+            max-width: 1000px;
+            margin-top: 20px;
+        }
+
+        #name-pool {
+            order: 1; /* Make name pool appear first (on top) */
+            background-color: rgba(236, 240, 241, 0.7); /* Same as statements-container for consistent look */
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px dashed #bdc3c7;
+            width: 100%; /* Take full width */
+            max-width: 800px; /* Limit max width for readability */
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            min-height: 80px; /* Adjust min height as needed */
+        }
+
+        #image-pool {
+            order: 2; /* Make image pool appear second (on bottom) */
+            background-color: var(--match-bg);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 100%; /* Take full width */
+            max-width: 800px; /* Match width of name-pool */
+            display: flex;
+            flex-direction: row; /* Ensure images are in a row */
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            min-height: 200px; /* Adjust min height as needed */
+        }
+        
+        #name-pool h3, #image-pool h3 {
+            width: 100%; /* Make heading take full width */
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-family: var(--font-title);
+            color: var(--text-color);
+        }
+
+        .image-card {
+            background-color: white;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid var(--match-drop-border);
+            width: 100%;
+            max-width: 150px; /* Smaller image cards */
+            height: 150px; /* Smaller image cards */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer; 
+            touch-action: manipulation; 
+        }
+
+        .image-card img {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+            object-fit: contain;
+        }
+        
+        .image-card.correct {
+            border-color: var(--match-correct-bg);
+            background-color: var(--match-correct-bg);
+        }
+        .image-card.incorrect {
+            border-color: var(--match-incorrect-bg);
+            background-color: var(--match-incorrect-bg);
+        }
+
+        .name-card {
+            background-color: var(--match-card-bg);
+            color: var(--text-color);
+            padding: 10px 15px; 
+            border-radius: 20px; 
+            border: 2px solid var(--match-card-border);
+            cursor: grab;
+            font-size: 1.1rem; 
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            touch-action: none;
+            text-align: center;
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        .name-card.selected {
+            background-color: var(--btn-bg);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .name-card.dragging {
+            opacity: 0.7;
+            cursor: grabbing;
+            transform: scale(1.1);
+            position: fixed !important;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .image-card::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 3rem;
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            color: white;
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            pointer-events: none;
+        }
+
+        .image-card.correct::after {
+            content: "\f00c";
+            background-color: rgba(40, 167, 69, 0.8);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .image-card.incorrect::after {
+            content: "\f00d";
+            background-color: rgba(220, 53, 69, 0.8);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .welcome-title-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            padding-left: 20px;
+            padding-right: 10px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .welcome-image {
+            position: absolute; /* Mengangkat gambar dari flow normal */
+            z-index: -1;    /* Menempatkan gambar di belakang teks */
+            top: 50%;       /* Posisikan di tengah secara vertikal */
+            left: -300px;
+            transform: translateY(-30%); /* Menyesuaikan posisi vertikal agar presisi */
+            max-width: 500px; /* Sesuaikan ukuran gambar */
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(3px 3px 2px rgba(0,0,0,0.3)); /* Tambahkan bayangan untuk kesan lebih hidup */
+        }
+        .welcome-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        /* Latar Belakang Gelembung */
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            animation: bubble-float 15s infinite ease-in-out;
+            opacity: 0;
+            z-index: -1; /* Keep bubbles behind everything */
+        }
+        .bubble:nth-child(1) { width: 60px; height: 60px; left: 10%; animation-duration: 12s; animation-delay: 0s; }
+        .bubble:nth-child(2) { width: 80px; height: 80px; left: 30%; animation-duration: 15s; animation-delay: 2s; }
+        .bubble:nth-child(3) { width: 280px; height: 280px; left: 50%; animation-duration: 10s; animation-delay: 1s; }
+        .bubble:nth-child(4) { width: 70px; height: 70px; left: 70%; animation-duration: 13s; animation-delay: 3s; }
+        .bubble:nth-child(5) { width: 300px; height: 300px; left: 90%; animation-duration: 16s; animation-delay: 4s; }
+        .bubble:nth-child(6) { width: 65px; height: 65px; left: 20%; animation-duration: 11s; animation-delay: 0.5s; }
+        .bubble:nth-child(7) { width: 75px; height: 75px; left: 45%; animation-duration: 14s; animation-delay: 2.5s; }
+
+        @keyframes bubble-float {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        .welcome-btn, #startButton {
+            padding: 12px 25px;
+            font-size: 1rem;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.2s ease-out;
+            font-weight: bold;
+        }
+        #startButton {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+        }
+        .welcome-btn {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+        }
+        #startButton:hover, .welcome-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+        }
+
+        /* --- MODAL --- */
+        .modal {
+            display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7); backdrop-filter: blur(5px); animation: fadeIn 0.3s ease;
+            align-items: center; justify-content: center;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-content {
+            margin: 5% auto; padding: 30px; border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); width: 90%; max-width: 600px;
+            position: relative;
+        }
+        .info-modal .modal-content {
+            background: linear-gradient(to bottom, #ffffff, #eef2f3); color: #333; text-align: left;
+        }
+        .info-modal h2 { text-align: center; color: #2c3e50; margin-top: 0; }
+        .info-modal ul { padding-left: 20px; }
+        .info-modal li { margin-bottom: 10px; }
+        .close {
+            color: #aaa; font-size: 32px; font-weight: bold; cursor: pointer; transition: all 0.2s ease;
+            position: absolute; top: 10px; right: 20px; z-index: 20;
+        }
+        .close:hover, .close:focus { color: #e74c3c; transform: rotate(90deg) scale(1.2); }
+
+        /* --- BARU: Style untuk Efek 3D Profile --- */
+        .profile-pic-container {
+            perspective: 1000px; /* Penting untuk menciptakan ruang 3D */
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-right: 20px;
+            overflow: hidden;
+        }
+
+        .profile-pic-container img {
+            transition: transform 0.2s ease-out; /* Animasi halus saat mouse bergerak */
+            width: 150px;
+            height: 300px; /* Dibuat persegi agar lingkaran sempurna */
+            object-fit: cover; /* Menjaga aspek rasio gambar asli */
+            display: block;
+        }
+
+        /* --- BARU: Efek Hover untuk Ikon Media Sosial --- */
+        #pengembangModal .fab {
+            transition: transform 0.3s ease, color 0.3s ease; /* Transisi halus */
+        }
+
+        #pengembangModal .fab:hover {
+            color: #F1C40F; /* Warna berubah menjadi kuning saat disentuh mouse */
+            animation: icon-wobble 0.6s ease-in-out; /* Menerapkan animasi bergoyang */
+        }
+
+        /* Animasi untuk efek bergoyang */
+        @keyframes icon-wobble {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(-15deg) scale(1.1); }
+            50% { transform: rotate(10deg) scale(1.1); }
+            75% { transform: rotate(-5deg) scale(1.1); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+        /* Style untuk gambar baru di sebelah kanan */
+        .modal-bg-image {
+            position: absolute;
+            right: 10px; /* Sedikit digeser ke kanan agar lebih fokus ke bagian wajah */
+            top: 0;
+            height: 100%;
+            opacity: 0.15; /* Membuat gambar sangat transparan */
+            pointer-events: none; /* Penting! Agar gambar tidak bisa di-klik dan tidak menghalangi konten di depannya */
+            z-index: 1; /* Posisikan di belakang konten utama */
+        }
+
+        /* Konten utama (teks & foto kiri) diposisikan di atas gambar latar */
+        .modal-main-content {
+            position: relative;
+            z-index: 2; /* Pastikan konten ini ada di lapisan atas */
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+		
+        /* --- Puzzle Game Styles --- */
+        #game-area-puzzle {
+            display: none;
+            flex-direction: column; /* Default ke kolom untuk tata letak umum */
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .puzzle-layout-container {
+            display: flex;
+            flex-direction: row; /* Default ke baris untuk desktop */
+            justify-content: center;
+            align-items: flex-start; /* Sejajarkan ke atas */
+            width: 100%;
+            max-width: 900px; /* Sesuaikan lebar maksimum */
+            gap: 20px;
+            flex-wrap: wrap; /* Izinkan wrap pada layar kecil */
+        }
+
+        .puzzle-left-panel {
+            flex: 1; /* Ambil proporsi ruang yang sama */
+            min-width: 250px; /* Lebar minimum untuk panel kiri */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            background-color: rgba(236, 240, 241, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px dashed #bdc3c7;
+        }
+
+        .puzzle-right-panel {
+            flex: 1; /* Ambil proporsi ruang yang sama */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 450px; /* Pastikan cukup lebar untuk puzzle grid */
+        }
+
+        .puzzle-container {
+            display: grid;
+            grid-template-columns: repeat(3, 150px);
+            grid-template-rows: repeat(3, 150px);
+            gap: 2px;
+            border: 3px solid #333;
+            border-radius: 8px;
+            background-color: #333;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            /* Hapus margin: 20px auto; karena sudah diatur oleh flexbox parent */
+        }
+
+        .puzzle-tile {
+            width: 150px;
+            height: 150px;
+            background-size: 450px 450px; /* Ensure background image covers the whole grid */
+            cursor: pointer;
+            transition: transform 0.2s;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+            user-select: none;
+        }
+
+        .puzzle-tile:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+            z-index: 1;
+        }
+
+        .puzzle-empty {
+            background-color: #ddd;
+            cursor: default;
+        }
+
+        .puzzle-empty:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        #final-stats-puzzle {
+            font-size: 1.5rem;
+            margin: 20px 0;
+        }
+
+        #final-stats-puzzle span {
+            font-weight: bold;
+            color: #2980B9;
+        }
+
+        /* Responsif untuk layar kecil pada Level 4 */
+        @media (max-width: 768px) {
+            .puzzle-layout-container {
+                flex-direction: column; /* Ubah menjadi kolom pada layar kecil */
+                align-items: center; /* Pusatkan secara horizontal */
+            }
+
+            .puzzle-left-panel,
+            .puzzle-right-panel {
+                width: 100%; /* Ambil lebar penuh */
+                min-width: unset; /* Hapus batasan lebar minimum */
+            }
+            .puzzle-container {
+                /* Untuk layar yang lebih kecil, mungkin perlu menyesuaikan ukuran tile atau membiarkannya diskalakan secara relatif. */
+                /* Untuk saat ini, biarkan ukuran tetap 150px per tile */
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <canvas id="numberCanvas"></canvas>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+	
+
+    <div id="welcome-screen">
+        <div class="welcome-title-group">
+            <img src="https://lh3.googleusercontent.com/d/1ika4en9PFUa6aRIXKDbvQzil6bxIO5E9" alt="bangbin" class="welcome-image"> <h1>LETAK GEOGRAFIS</h1>
+        </div>
+        <p>Selamat datang Anak Hebat</p>
+        <button id="startButton">Mulai Bermain</button>
+        <div class="welcome-buttons">
+            <button id="petunjukBtn" class="btn-3d">Petunjuk</button>
+            <button id="tujuanBtn" class="btn-3d">Tujuan</button>
+			<button id="sumberBtn" class="btn-3d">Sumber</button>
+			<a href="Pulau.html"><button class="btn-3d">Materi</i></button></a>			
+            <button id="pengembangBtn" class="btn-3d"><i class="fa fa-user"></i></button>			
+			<a href="Pulau-Indonesia.html" target="_blank"><button class="btn-3d"><i class="fa fa-home"></i></button></a>
+        </div>
+    </div>
+
+    <div id="petunjukModal" class="modal info-modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>Petunjuk Permainan</h2>
+            <ul>
+                <li>Klik tombol "Mulai Bermain" untuk masuk ke permainan.</li>
+                <li><b>Level 1 (Letak Geografis):</b> Seret setiap keterangan ke kelompok yang benar: Letak Astronomis, Batas Utara, atau Batas Selatan & Timur.</li>
+                <li><b>Level 2 (Temukan Kata):</b> Temukan semua nama pulau dan samudra yang tersembunyi di dalam kotak huruf.</li>
+                <li><b>Level 3 (Jodohkan Pulau):</b> Jodohkan gambar peta pulau dengan nama yang tepat. Ketuk nama lalu ketuk gambar untuk mencocokkan.</li>
+                <li><b>Level 4 (Puzzle Peta):</b> Susun potongan gambar Peta Indonesia dengan menggeser potongan yang bersebelahan dengan kotak kosong.</li>
+                <li>Selesaikan semua level untuk menamatkan permainan. Selamat bermain!</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="tujuanModal" class="modal info-modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>Tujuan Pembelajaran</h2>
+            <p>Permainan ini dirancang untuk membantu pemain dalam mencapai tujuan berikut:</p>
+            <ul>
+                <li>Mengidentifikasi letak astronomis dan geografis Indonesia.</li>
+                <li>Mengenali batas-batas wilayah Indonesia di sebelah utara, selatan, dan timur.</li>
+                <li>Meningkatkan pengetahuan tentang nama-nama pulau besar dan samudra di sekitar Indonesia.</li>
+                <li>Mengenal bentuk peta pulau-pulau besar di Indonesia.</li>
+                <li>Mengembangkan koordinasi mata dan tangan, serta kecepatan berpikir melalui permainan interaktif.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="sumberModal" class="modal info-modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>Sumber</h2>
+
+				<ul class="list-disc pl-5 text-left">
+					<li><strong>Kemdikbudristek</strong> - Ilmu Pengetahuan Alam dan Sosial untuk SD/MI Kelas V (Edisi Revisi) 2024.</li>
+					<li><strong>www.flaticon.com</strong> - asset gambar pulau Indonesia. diakses 12 Juli 2025.</li>
+					<li><strong>soundjay.com</strong> - Sound effect. diakses 13 Juli 2025.</li>
+					<li><strong>three.js</strong> - effect 3d bendera merah putih.</li>
+					<li><strong>fonts.googleapis.com</strong> - sebagian besar font yang di gunakan.</li>
+				</ul>
+        </div>
+    </div>
+
+
+    <div id="pengembangModal" class="modal">
+        <div class="modal-content" style="background: linear-gradient(135deg, #4e54c8, #8f94fb); max-width: 700px; padding: 25px;">
+            <span class="close">×</span>
+            <div class="modal-main-content">
+                <img src="https://lh3.googleusercontent.com/d/1ivUN8B8xdd4R8Kef_-wEqNx56_eeUv4w" alt="Background" class="modal-bg-image"> <div class="profile-pic-container">
+                    <img src="https://lh3.googleusercontent.com/d/1tFGMHXxFlkz5Ij0nHbxddt4aF-MfnTio" alt="Foto Profil"> </div>
+									
+
+                <div style="color: white; text-align: left; flex-grow: 1;">
+                    <h2 style="margin: 0; font-size: 1.5em;">BINTANG ADHI PERMANA</h2>
+                    <p style="margin: 5px 0; font-size: 0.9em;">SDN Lubang Buaya 01, Jakarta Timur</p>
+                    <p style="margin: 10px 0 5px 0; font-weight: bold; font-size: 0.9em;">Kontak:</p>
+                    <div style="font-size: 1.8em;">
+                        <a href="https://www.facebook.com/bintang.a.permana.1/" target="_blank" style="margin-right: 15px; color: white; text-decoration: none;"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.youtube.com/@Bangbin_1" target="_blank" style="margin-right: 15px; color: white; text-decoration: none;"><i class="fab fa-youtube"></i></a>
+                        <a href="https://wa.me/6281310051985" target="_blank" style="color: white; text-decoration: none;"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="end-animation-container"></div>
+    <div id="main-container">
+        <div id="start-screen-drag-drop">
+            <h1>Level 1: Letak Geografis</h1>
+            <p style="font-size: 1.2rem;">Seret setiap keterangan ke kelompok yang benar: <b>Letak Astronomis, Batas Utara,</b> atau <b>Batas Selatan & Timur</b>. Waktumu 45 detik!</p>
+            <button id="start-btn-drag-drop" class="btn-3d">Mulai!</button>
+        </div>
+
+        <div id="game-area-drag-drop">
+            <div id="game-info-drag-drop" class="game-info">
+                <div id="score-container-drag-drop">Skor: <span id="score-drag-drop">0</span></div>
+                <div id="timer-container-drag-drop">Waktu: <span id="time-drag-drop">45</span></div>
+            </div>
+            <div id="statements-container">
+                <h3>👇 Seret keterangan dari sini 👇</h3>
+                <div id="cards-pool"></div>
+            </div>
+            <div id="categories-container"></div>
+            <div id="feedback-drag-drop"></div>
+        </div>
+
+        <div id="end-screen-drag-drop" style="display: none;">
+            <h1>Level 1 Selesai!</h1>
+            <h2 id="final-title-drag-drop"></h2>
+            <h2 id="final-score-drag-drop" style="color: #007bff; font-size: 4rem;">0</h2>
+            <p id="final-message-drag-drop" style="font-size: 1.2rem;"></p>
+            <button id="next-level-btn" class="btn-3d" style="display: none;">Lanjut ke Level 2</button>
+            <button id="restart-btn-drag-drop" class="btn-3d" style="display: none;">Main Lagi</button>
+            <a href="https://sites.google.com/view/bangbinedu/home" target="_blank"><button class="btn-3d"><i class="fa fa-home"></i></button></a>
+        </div>
+
+
+        <div id="start-screen-find-word" style="display: none;">
+            <h1>Level 2: Pulau & Samudra</h1>
+            <p style="font-size: 1.2rem;">Temukan semua nama pulau dan samudra yang tersembunyi di dalam kotak huruf. Klik dan seret untuk menandai kata!</p>
+            <button id="start-btn-find-word" class="btn-3d">Mulai!</button>
+        </div>
+
+        <div id="game-area-find-word" style="display: none;">
+            <div id="game-info-find-word" class="game-info">
+                <div id="words-found-container">Ditemukan: <span id="words-found-count">0</span> / <span id="total-words-count"></span></div>
+                <div id="timer-container-find-word">Waktu: <span id="time-find-word"></span></div>
+            </div>
+            
+            <div id="find-word-game-layout">
+                <div id="word-grid-container">
+                    <div id="word-grid"></div>
+                </div>
+                <div id="word-list-container">
+                    <h3>Daftar Kata:</h3>
+                    <ul id="word-list"></ul>
+                </div>
+            </div>
+            <div id="feedback-find-word"></div>
+        </div>
+
+        <div id="end-screen-find-word" style="display: none;">
+            <h1>Permainan Selesai!</h1>
+            <h2 id="final-title-find-word"></h2>
+            <h2 id="final-words-found" style="color: #007bff; font-size: 4rem;">0</h2>
+            <p id="final-message-find-word" style="font-size: 1.2rem;"></p>
+            <button id="next-level-btn-matching" class="btn-3d" style="display: none;">Lanjut ke Level 3</button>
+            <button id="restart-btn-find-word" class="btn-3d" style="display: none;">Main Lagi</button>
+            <a href="https://sites.google.com/view/bangbinedu/home" target="_blank"><button class="btn-3d"><i class="fa fa-home"></i></button></a>
+        </div>
+
+
+        <div id="start-screen-matching" style="display: none;">
+            <h1>Level 3: Jodohkan Pulau</h1>
+            <p style="font-size: 1.2rem;">Jodohkan gambar peta pulau dengan nama yang tepat. Ketuk nama, lalu ketuk gambar untuk mencocokkannya!</p>
+            <button id="start-btn-matching" class="btn-3d">Mulai!</button>
+        </div>
+
+        <div id="game-area-matching" style="display: none;">
+            <div id="game-info-matching" class="game-info">
+                <div id="matches-found-container">Pasangan: <span id="matches-found-count">0</span> / <span id="total-matches-count"></span></div>
+                <div id="timer-container-matching">Waktu: <span id="time-matching"></span></div>
+            </div>
+            <div id="matching-game-layout">
+                <div id="name-pool">
+                    <h3>Nama Pulau</h3>
+                </div>
+                <div id="image-pool">
+                    <h3>Peta Pulau</h3>
+                </div>
+            </div>
+            <div id="feedback-matching"></div>
+        </div>
+
+        <div id="end-screen-matching" style="display: none;">
+            <h1>Permainan Selesai!</h1>
+            <h2 id="final-title-matching"></h2>
+            <h2 id="final-matches-found" style="color: #007bff; font-size: 4rem;">0</h2>
+            <p id="final-message-matching" style="font-size: 1.2rem;"></p>
+            <button id="restart-btn-matching" class="btn-3d">Main Lagi</button>
+			<button id="next-level-btn-puzzle" class="btn-3d">Lanjut ke Level 4</button>
+            <a href="https://sites.google.com/view/bangbinedu/home" target="_blank"><button class="btn-3d"><i class="fa fa-home"></i></button></a>
+        </div>
+
+        <!-- Puzzle Game (Level 4) moved inside main-container -->
+        <div id="start-screen-puzzle" style="display: none;">
+            <h1>Level 4: Puzzle Peta</h1>
+            <p style="font-size: 1.2rem;">Susun potongan Peta Indonesia dengan benar! Geser potongan yang bersebelahan dengan kotak kosong.</p>
+            <button id="start-btn-puzzle" class="btn-3d">Mulai!</button>
+        </div>
+
+        <div id="game-area-puzzle" style="display: none;">
+            <div class="puzzle-layout-container">
+                <div class="puzzle-left-panel">
+                    <div class="game-info">
+                        <div id="move-counter-puzzle">Langkah: <span id="moves-puzzle">0</span></div>
+                        <div id="timer-container-puzzle">Waktu: <span id="time-puzzle">120</span></div>
+                    </div>
+                    <div class="controls">
+                        <button id="shuffle-btn-puzzle" class="btn-3d">Acak Ulang</button>
+                        <button id="solve-btn-puzzle" class="btn-3d">Selesaikan</button>
+                    </div>
+                </div>
+                <div class="puzzle-right-panel">
+                    <div class="puzzle-container" id="puzzle-grid"></div>
+                </div>
+            </div>
+            <div id="feedback-puzzle"></div>
+        </div>
+
+        <div id="end-screen-puzzle" style="display: none;">
+            <h1>Puzzle Selesai!</h1>
+            <h2 id="final-title-puzzle"></h2>
+            <div id="final-stats-puzzle">
+                <p>Langkah: <span id="final-moves-puzzle">0</span></p>
+                <p>Waktu: <span id="final-time-puzzle">0</span></p>
+            </div>
+            <p id="final-message-puzzle" style="font-size: 1.2rem;"></p>
+            <button id="restart-btn-puzzle" class="btn-3d">Main Lagi</button>
+            <button class="btn-3d" id="home-btn-puzzle"><i class="fa fa-home"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // --- Global Audio Context (shared) ---
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+        function playSound(type) {
+            if (!audioCtx) return;
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+
+            switch (type) {
+                case 'correct':
+                    oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.3);
+                    break;
+                case 'wrong':
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.2);
+                    break;
+                case 'click':
+                    oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.1);
+                    break;
+                case 'tick':
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.05);
+                    break;
+                case 'win':
+                    const now = audioCtx.currentTime;
+                    oscillator.frequency.setValueAtTime(523.25, now);
+                    oscillator.frequency.linearRampToValueAtTime(659.25, now + 0.1);
+                    oscillator.frequency.linearRampToValueAtTime(783.99, now + 0.2);
+                    gainNode.gain.exponentialRampToValueAtTime(0.00001, now + 0.5);
+                    break;
+                case 'level_up':
+                    const nowLevelUp = audioCtx.currentTime;
+                    oscillator.frequency.setValueAtTime(600, nowLevelUp);
+                    oscillator.frequency.linearRampToValueAtTime(800, nowLevelUp + 0.1);
+                    oscillator.frequency.linearRampToValueAtTime(1000, nowLevelUp + 0.2);
+                    gainNode.gain.exponentialRampToValueAtTime(0.00001, nowLevelUp + 0.5);
+                    break;
+            }
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.5);
+        }
+
+
+// --- Puzzle Game Variables ---
+const PUZZLE_IMAGE_URL = "https://cdn-icons-png.flaticon.com/512/4915/4915691.png";
+const PUZZLE_DURATION = 120; // 2 minutes
+let puzzleTiles = [];
+let emptyPuzzleIndex = 8;
+let puzzleMoves = 0;
+let puzzleTimer;
+let puzzleTimeLeft;
+let isPuzzleSolved = false;
+
+// --- Puzzle Game Elements ---
+const startScreenPuzzle = document.getElementById('start-screen-puzzle');
+const gameAreaPuzzle = document.getElementById('game-area-puzzle');
+const endScreenPuzzle = document.getElementById('end-screen-puzzle');
+const startBtnPuzzle = document.getElementById('start-btn-puzzle');
+const shuffleBtnPuzzle = document.getElementById('shuffle-btn-puzzle');
+const solveBtnPuzzle = document.getElementById('solve-btn-puzzle');
+const restartBtnPuzzle = document.getElementById('restart-btn-puzzle');
+const puzzleGrid = document.getElementById('puzzle-grid');
+const movesCounterPuzzle = document.getElementById('moves-puzzle');
+const timeElPuzzle = document.getElementById('time-puzzle');
+const timerContainerPuzzle = document.getElementById('timer-container-puzzle');
+const feedbackElPuzzle = document.getElementById('feedback-puzzle');
+const finalTitlePuzzle = document.getElementById('final-title-puzzle');
+const finalMovesPuzzle = document.getElementById('final-moves-puzzle');
+const finalTimePuzzle = document.getElementById('final-time-puzzle');
+const finalMessagePuzzle = document.getElementById('final-message-puzzle');
+const homeBtnPuzzle = document.getElementById('home-btn-puzzle'); // Get the new home button
+
+// --- Puzzle Game Event Listeners ---
+startBtnPuzzle.addEventListener('click', () => { 
+    initAudio(); 
+    playSound('click'); 
+    startGamePuzzle(); 
+});
+
+shuffleBtnPuzzle.addEventListener('click', () => { 
+    playSound('click'); 
+    shufflePuzzle(); 
+});
+
+solveBtnPuzzle.addEventListener('click', () => { 
+    playSound('click'); 
+    solvePuzzle(); 
+});
+
+restartBtnPuzzle.addEventListener('click', () => { 
+    playSound('click'); 
+    startGamePuzzle(); 
+});
+
+// New event listener for the home button in Level 4
+homeBtnPuzzle.addEventListener('click', () => {
+    playSound('click');
+    hideAllGameScreens();
+    welcomeScreen.style.display = 'flex';
+});
+
+// --- NEW: Helper for Fisher-Yates shuffle
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+// --- NEW: Function to count inversions for solvability check
+function countInversions(arr) {
+    const numbers = arr.filter(num => num !== 0); // Exclude empty tile
+    let inversions = 0;
+    for (let i = 0; i < numbers.length - 1; i++) {
+        for (let j = i + 1; j < numbers.length; j++) {
+            if (numbers[i] > numbers[j]) {
+                inversions++;
+            }
+        }
+    }
+    return inversions;
+}
+
+// --- NEW: Function to check if a 3x3 puzzle is solvable
+function isSolvable(tiles) {
+    // For an 8-puzzle (3x3), it's solvable if the number of inversions is even.
+    const inversions = countInversions(tiles);
+    return inversions % 2 === 0;
+}
+
+// --- Puzzle Game Functions ---
+function startLevel4() {
+    hideAllGameScreens();
+    mainContainer.style.display = 'flex';
+    startScreenPuzzle.style.display = 'block';
+}
+
+function startGamePuzzle() {
+    puzzleMoves = 0;
+    movesCounterPuzzle.innerText = puzzleMoves;
+    feedbackElPuzzle.innerText = "";
+    isPuzzleSolved = false;
+    animationContainer.innerHTML = '';
+    
+    hideAllGameScreens();
+    mainContainer.style.display = 'flex';
+    gameAreaPuzzle.style.display = 'flex';
+
+    shufflePuzzle(); 
+}
+
+function shufflePuzzle() {
+    let tempTiles;
+    do {
+        tempTiles = [1, 2, 3, 4, 5, 6, 7, 8, 0]; 
+        shuffleArray(tempTiles);
+    } while (!isSolvable(tempTiles)); 
+
+    puzzleTiles = tempTiles;
+    emptyPuzzleIndex = puzzleTiles.indexOf(0);
+    puzzleMoves = 0; 
+    movesCounterPuzzle.innerText = puzzleMoves;
+    renderPuzzleTiles();
+    feedbackElPuzzle.innerText = ""; 
+    isPuzzleSolved = false;
+    startPuzzleTimer(); 
+}
+
+function renderPuzzleTiles() {
+    puzzleGrid.innerHTML = '';
+    
+    puzzleTiles.forEach((value, index) => {
+        const tile = document.createElement('div');
+        tile.className = value === 0 ? 'puzzle-tile puzzle-empty' : 'puzzle-tile';
+        tile.dataset.index = index;
+        
+        if (value !== 0) {
+            const row = Math.floor((value - 1) / 3);
+            const col = (value - 1) % 3;
+            
+            tile.style.backgroundImage = `url('${PUZZLE_IMAGE_URL}')`;
+            tile.style.backgroundPosition = `-${col * 150}px -${row * 150}px`;
+        }
+        
+        tile.addEventListener('click', () => movePuzzleTile(index));
+        puzzleGrid.appendChild(tile);
+    });
+    
+    emptyPuzzleIndex = puzzleTiles.indexOf(0);
+    checkPuzzleSolved();
+}
+
+function movePuzzleTile(index) {
+    if (isPuzzleSolved) return;
+    
+    if (isAdjacentPuzzle(index, emptyPuzzleIndex)) {
+        playSound('click');
+        [puzzleTiles[index], puzzleTiles[emptyPuzzleIndex]] = [puzzleTiles[emptyPuzzleIndex], puzzleTiles[index]];
+        puzzleMoves++;
+        movesCounterPuzzle.innerText = puzzleMoves;
+        renderPuzzleTiles();
+    } else {
+        playSound('wrong'); 
+        feedbackElPuzzle.innerText = "Geser hanya ke kotak kosong yang bersebelahan!";
+        feedbackElPuzzle.style.color = '#dc3545';
+        setTimeout(() => feedbackElPuzzle.innerText = "", 1500);
+    }
+}
+
+function isAdjacentPuzzle(index1, index2) {
+    const row1 = Math.floor(index1 / 3);
+    const col1 = index1 % 3;
+    const row2 = Math.floor(index2 / 3);
+    const col2 = index2 % 3;
+    
+    return (
+        (Math.abs(row1 - row2) === 1 && col1 === col2) || 
+        (Math.abs(col1 - col2) === 1 && row1 === row2)    
+    );
+}
+
+function solvePuzzle() {
+    if (isPuzzleSolved) return;
+
+    puzzleTiles = [1, 2, 3, 4, 5, 6, 7, 8, 0]; 
+    emptyPuzzleIndex = 8;
+    renderPuzzleTiles();
+    isPuzzleSolved = true;
+    feedbackElPuzzle.innerText = "Puzzle diselesaikan!";
+    feedbackElPuzzle.style.color = '#28a745';
+    clearInterval(puzzleTimer); 
+    setTimeout(() => endGamePuzzle('win'), 1000); 
+}
+
+function checkPuzzleSolved() {
+    const isSolved = puzzleTiles.every((val, idx) => 
+        val === 0 ? idx === puzzleTiles.length - 1 : val === idx + 1);
+    
+    if (isSolved && !isPuzzleSolved) { 
+        isPuzzleSolved = true;
+        clearInterval(puzzleTimer);
+        playSound('win');
+        feedbackElPuzzle.innerText = "Selamat! Puzzle terselesaikan!";
+        feedbackElPuzzle.style.color = '#28a745';
+        setTimeout(() => endGamePuzzle('win'), 1000);
+    }
+}
+
+function startPuzzleTimer() {
+    puzzleTimeLeft = PUZZLE_DURATION;
+    timeElPuzzle.innerText = formatTime(puzzleTimeLeft);
+    timerContainerPuzzle.classList.remove('warning');
+    clearInterval(puzzleTimer);
+    puzzleTimer = setInterval(() => {
+        puzzleTimeLeft--;
+        timeElPuzzle.innerText = formatTime(puzzleTimeLeft);
+        if (puzzleTimeLeft <= 10 && puzzleTimeLeft > 0) {
+            timerContainerPuzzle.classList.add('warning');
+            playSound('tick');
+        }
+        if (puzzleTimeLeft <= 0) {
+            clearInterval(puzzleTimer);
+            endGamePuzzle('timeup');
+        }
+    }, 1000);
+}
+
+function endGamePuzzle(reason) {
+    gameAreaPuzzle.style.display = 'none';
+    endScreenPuzzle.style.display = 'block';
+    finalMovesPuzzle.innerText = puzzleMoves;
+    finalTimePuzzle.innerText = formatTime(PUZZLE_DURATION - puzzleTimeLeft);
+    
+    if (reason === 'timeup') {
+        playSound('wrong');
+        finalTitlePuzzle.innerText = "Waktu Habis!";
+        finalMessagePuzzle.innerText = "Waktunya habis! Coba lagi untuk menyelesaikan puzzle.";
+    } else if (reason === 'win') {
+        playSound('win');
+        finalTitlePuzzle.innerText = "Selamat!";
+        finalMessagePuzzle.innerText = "Kamu berhasil menyusun Peta Indonesia!";
+        createFallingStars();
+    }
+}
+
+        // --- Game Flow Control ---
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const mainContainer = document.getElementById('main-container');
+
+        const startScreenDragDrop = document.getElementById('start-screen-drag-drop');
+        const gameAreaDragDrop = document.getElementById('game-area-drag-drop');
+        const endScreenDragDrop = document.getElementById('end-screen-drag-drop');
+        const nextLevelBtn = document.getElementById('next-level-btn');
+        const restartBtnDragDrop = document.getElementById('restart-btn-drag-drop');
+
+        const startScreenFindWord = document.getElementById('start-screen-find-word');
+        const gameAreaFindWord = document.getElementById('game-area-find-word');
+        const endScreenFindWord = document.getElementById('end-screen-find-word');
+        const nextLevelBtnMatching = document.getElementById('next-level-btn-matching');
+
+        const startScreenMatching = document.getElementById('start-screen-matching');
+        const gameAreaMatching = document.getElementById('game-area-matching');
+        const endScreenMatching = document.getElementById('end-screen-matching');
+        const restartBtnMatching = document.getElementById('restart-btn-matching');
+		
+		
+
+        function hideAllGameScreens() {
+            welcomeScreen.style.display = 'none';
+            mainContainer.style.display = 'none';
+            startScreenDragDrop.style.display = 'none';
+            gameAreaDragDrop.style.display = 'none';
+            endScreenDragDrop.style.display = 'none';
+            startScreenFindWord.style.display = 'none';
+            gameAreaFindWord.style.display = 'none';
+            endScreenFindWord.style.display = 'none';
+            startScreenMatching.style.display = 'none';
+            gameAreaMatching.style.display = 'none';
+            endScreenMatching.style.display = 'none';
+			startScreenPuzzle.style.display = 'none';
+			gameAreaPuzzle.style.display = 'none';
+			endScreenPuzzle.style.display = 'none';
+			
+
+            clearInterval(timerDragDrop);
+            clearInterval(timerFindWord);
+            clearInterval(timerMatching);
+			clearInterval(puzzleTimer);
+        }
+
+        // --- Drag and Drop Game Logic (Level 1) ---
+        const GAME_DURATION_DRAG_DROP = 45;
+
+        const statements = [
+            { id: 1, text: "6°LU - 11°LS", category: "letak_astronomis" },
+            { id: 2, text: "Malaysia", category: "batas_utara" },
+            { id: 3, text: "Samudra Pasifik", category: "batas_selatan_timur" },
+            { id: 4, text: "95°BT - 141°BT", category: "letak_astronomis" },
+            { id: 5, text: "Singapura", category: "batas_utara" },
+            { id: 6, text: "Timor Leste", category: "batas_selatan_timur" },
+            { id: 7, text: "Filipina", category: "batas_utara" },
+            { id: 8, text: "Australia", category: "batas_selatan_timur" },
+            { id: 9, text: "Papua Nugini", category: "batas_selatan_timur" },
+            { id: 10, text: "Samudra Hindia", category: "batas_selatan_timur" }
+        ];
+
+        const categories = {
+            letak_astronomis: { title: "Letak Astronomis", elementId: "box-astronomis" },
+            batas_utara: { title: "Batas Utara", elementId: "box-utara" },
+            batas_selatan_timur: { title: "Batas Selatan & Timur", elementId: "box-selatan-timur" },
+        };
+
+        const startBtnDragDrop = document.getElementById('start-btn-drag-drop');
+        const cardsPool = document.getElementById('cards-pool');
+        const categoriesContainer = document.getElementById('categories-container');
+        const scoreElDragDrop = document.getElementById('score-drag-drop');
+        const timeElDragDrop = document.getElementById('time-drag-drop');
+        const timerContainerDragDrop = document.getElementById('timer-container-drag-drop');
+        const feedbackElDragDrop = document.getElementById('feedback-drag-drop');
+        const finalTitleElDragDrop = document.getElementById('final-title-drag-drop');
+        const finalScoreElDragDrop = document.getElementById('final-score-drag-drop');
+        const finalMessageElDragDrop = document.getElementById('final-message-drag-drop');
+        const animationContainer = document.getElementById('end-animation-container');
+
+        let scoreDragDrop, matchedCardsDragDrop, activeCardDragDrop, offsetXDragDrop, offsetYDragDrop, timerDragDrop, timeLeftDragDrop;
+
+        startBtnDragDrop.addEventListener('click', () => { initAudio(); playSound('click'); startGameDragDrop(); });
+        restartBtnDragDrop.addEventListener('click', () => { playSound('click'); startGameDragDrop(); });
+        nextLevelBtn.addEventListener('click', () => { initAudio(); playSound('click'); startLevel2(); });
+        
+        function startGameDragDrop() {
+            scoreDragDrop = 0;
+            matchedCardsDragDrop = 0;
+            scoreElDragDrop.innerText = scoreDragDrop;
+            feedbackElDragDrop.innerText = "";
+            animationContainer.innerHTML = '';
+            
+            hideAllGameScreens();
+            mainContainer.style.display = 'flex';
+            gameAreaDragDrop.style.display = 'flex';
+
+            setupGameDragDrop();
+            startTimerDragDrop();
+        }
+
+        function startTimerDragDrop() {
+            timeLeftDragDrop = GAME_DURATION_DRAG_DROP;
+            timeElDragDrop.innerText = timeLeftDragDrop;
+            timerContainerDragDrop.classList.remove('warning');
+            clearInterval(timerDragDrop);
+            timerDragDrop = setInterval(() => {
+                timeLeftDragDrop--;
+                timeElDragDrop.innerText = timeLeftDragDrop;
+                if (timeLeftDragDrop <= 5 && timeLeftDragDrop > 0) {
+                    timerContainerDragDrop.classList.add('warning');
+                    playSound('tick');
+                }
+                if (timeLeftDragDrop <= 0) {
+                    clearInterval(timerDragDrop);
+                    endGameDragDrop('timeup');
+                }
+            }, 1000);
+        }
+
+        function setupGameDragDrop() {
+            cardsPool.innerHTML = '';
+            categoriesContainer.innerHTML = '';
+
+            for (const key in categories) {
+                const category = categories[key];
+                const box = document.createElement('div');
+                box.id = category.elementId;
+                box.className = 'category-box';
+                box.dataset.category = key;
+                box.innerHTML = `<h2>${category.title}</h2>`;
+                categoriesContainer.appendChild(box);
+                
+                box.addEventListener('dragover', e => { e.preventDefault(); box.classList.add('drag-over'); });
+                box.addEventListener('dragleave', () => box.classList.remove('drag-over'));
+                box.addEventListener('drop', onDropDragDrop);
+            }
+
+            const shuffledStatements = statements.sort(() => Math.random() - 0.5);
+            shuffledStatements.forEach(statement => {
+                const card = document.createElement('div');
+                card.id = `card-drag-drop-${statement.id}`;
+                card.className = 'statement-card';
+                card.draggable = true;
+                card.innerText = statement.text;
+                card.dataset.category = statement.category;
+                cardsPool.appendChild(card);
+                
+                card.addEventListener('dragstart', onDragStartMouseDragDrop);
+                card.addEventListener('touchstart', onTouchStartDragDrop, { passive: false });
+            });
+
+            document.addEventListener('touchmove', onTouchMoveDragDrop, { passive: false });
+            document.addEventListener('touchend', onTouchEndDragDrop);
+        }
+        
+        function handleMatchDragDrop(card, dropZone) {
+            const cardCategory = card.dataset.category;
+            const zoneCategory = dropZone.dataset.category;
+
+            if (cardCategory === zoneCategory) {
+                playSound('correct');
+                feedbackElDragDrop.innerText = "Benar!";
+                feedbackElDragDrop.style.color = '#28a745';
+                scoreDragDrop += 10;
+                scoreElDragDrop.innerText = scoreDragDrop;
+                card.draggable = false;
+                card.className = 'statement-card';
+                card.style = '';
+                dropZone.appendChild(card);
+                matchedCardsDragDrop++;
+                if (matchedCardsDragDrop === statements.length) {
+                    clearInterval(timerDragDrop);
+                    setTimeout(() => endGameDragDrop('win'), 500);
+                }
+            } else {
+                playSound('wrong');
+                feedbackElDragDrop.innerText = "Kurang Tepat!";
+                feedbackElDragDrop.style.color = '#dc3545';
+                cardsPool.appendChild(card);
+            }
+            setTimeout(() => { feedbackElDragDrop.innerText = "" }, 1500);
+        }
+
+        function onDragStartMouseDragDrop(e) { e.dataTransfer.setData('text/plain', e.target.id); }
+        function onDropDragDrop(e) {
+            e.preventDefault();
+            const dropZone = e.currentTarget;
+            dropZone.classList.remove('drag-over');
+            const cardId = e.dataTransfer.getData('text/plain');
+            handleMatchDragDrop(document.getElementById(cardId), dropZone);
+        }
+
+        function onTouchStartDragDrop(e) {
+            e.preventDefault();
+            activeCardDragDrop = e.currentTarget;
+            const rect = activeCardDragDrop.getBoundingClientRect();
+            offsetXDragDrop = e.touches[0].clientX - rect.left;
+            offsetYDragDrop = e.touches[0].clientY - rect.top;
+            activeCardDragDrop.style.width = `${rect.width}px`;
+            activeCardDragDrop.style.height = `${rect.height}px`;
+            activeCardDragDrop.classList.add('dragging');
+            activeCardDragDrop.style.left = `${e.touches[0].clientX - offsetXDragDrop}px`;
+            activeCardDragDrop.style.top = `${e.touches[0].clientY - offsetYDragDrop}px`;
+        }
+
+        function onTouchMoveDragDrop(e) {
+            if (!activeCardDragDrop) return;
+            e.preventDefault();
+            const x = e.touches[0].clientX, y = e.touches[0].clientY;
+            activeCardDragDrop.style.left = `${x - offsetXDragDrop}px`;
+            activeCardDragDrop.style.top = `${y - offsetYDragDrop}px`;
+            document.querySelectorAll('.category-box').forEach(box => {
+                const rect = box.getBoundingClientRect();
+                box.classList.toggle('drag-over', x > rect.left && x < rect.right && y > rect.top && y < rect.bottom);
+            });
+        }
+
+        function onTouchEndDragDrop(e) {
+            if (!activeCardDragDrop) return;
+            activeCardDragDrop.classList.remove('dragging');
+            const x = e.changedTouches[0].clientX, y = e.changedTouches[0].clientY;
+            activeCardDragDrop.style.display = 'none';
+            const elementBelow = document.elementFromPoint(x, y);
+            activeCardDragDrop.style.display = 'block';
+            let dropZone = elementBelow ? elementBelow.closest('.category-box') : null;
+            document.querySelectorAll('.category-box').forEach(box => box.classList.remove('drag-over'));
+            if (dropZone) {
+                handleMatchDragDrop(activeCardDragDrop, dropZone);
+            } else {
+                cardsPool.appendChild(activeCardDragDrop);
+                activeCardDragDrop.style.position = 'static';
+                activeCardDragDrop.style.width = 'auto';
+                activeCardDragDrop.style.height = 'auto';
+            }
+            activeCardDragDrop = null;
+        }
+        
+        function createFallingStars() {
+            for (let i = 0; i < 30; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.animationDuration = `${Math.random() * 3 + 4}s`;
+                star.style.animationDelay = `${Math.random() * 3}s`;
+                star.style.transform = `scale(${Math.random() * 0.5 + 0.8})`;
+                animationContainer.appendChild(star);
+            }
+        }
+        
+        function endGameDragDrop(reason) {
+            gameAreaDragDrop.style.display = 'none';
+            endScreenDragDrop.style.display = 'block';
+            finalScoreElDragDrop.innerText = scoreDragDrop;
+            
+            if (reason === 'timeup') {
+                playSound('wrong');
+                finalTitleElDragDrop.innerText = "Waktu Habis!";
+                finalMessageElDragDrop.innerText = "Jangan menyerah, pahlawan! Coba lagi ya!";
+                nextLevelBtn.style.display = 'none';
+                restartBtnDragDrop.style.display = 'inline-block';
+            } else if (reason === 'win') {
+                playSound('level_up');
+                finalTitleElDragDrop.innerText = "Level 1 Berhasil!";
+                finalMessageElDragDrop.innerText = "Kamu hebat! Semua keterangan sudah dikelompokkan dengan benar! Lanjut ke Level 2!";
+                createFallingStars();
+                nextLevelBtn.style.display = 'inline-block';
+                restartBtnDragDrop.style.display = 'none';
+            }
+        }
+
+        // --- Find Word Game Logic (Level 2) ---
+        const WORDS_TO_FIND = [
+            "SUMATERA", "JAWA", "KALIMANTAN", "SULAWESI", 
+            "PAPUA", "HINDIA", "BALI", "MALUKU"
+        ];
+        const GRID_SIZE = 12;
+        const GAME_DURATION_FIND_WORD = 120;
+
+        const startBtnFindWord = document.getElementById('start-btn-find-word');
+        const restartBtnFindWord = document.getElementById('restart-btn-find-word');
+        const actualWordGrid = document.querySelector('#word-grid-container #word-grid');
+        const actualWordList = document.querySelector('#word-list-container #word-list');
+        const wordsFoundCountEl = document.getElementById('words-found-count');
+        const totalWordsCountEl = document.getElementById('total-words-count');
+        const timeElFindWord = document.getElementById('time-find-word');
+        const timerContainerFindWord = document.getElementById('timer-container-find-word');
+        const feedbackElFindWord = document.getElementById('feedback-find-word');
+        const finalTitleFindWord = document.getElementById('final-title-find-word');
+        const finalWordsFoundEl = document.getElementById('final-words-found');
+        const finalMessageFindWord = document.getElementById('final-message-find-word');
+
+        let grid = [];
+        let foundWords = new Set();
+        let currentSelection = [];
+        let isSelecting = false;
+        let timerFindWord, timeLeftFindWord;
+        let startCellCoords = null; 
+
+        restartBtnFindWord.addEventListener('click', () => { playSound('click'); startGameFindWord(); });
+        nextLevelBtnMatching.addEventListener('click', () => { initAudio(); playSound('click'); startLevel3(); });
+
+        function startLevel2() {
+            hideAllGameScreens();
+            mainContainer.style.display = 'flex';
+            startScreenFindWord.style.display = 'block';
+        }
+
+        startBtnFindWord.addEventListener('click', () => { initAudio(); playSound('click'); startGameFindWord(); });
+
+        function startGameFindWord() {
+            foundWords.clear();
+            wordsFoundCountEl.innerText = 0;
+            totalWordsCountEl.innerText = WORDS_TO_FIND.length;
+            feedbackElFindWord.innerText = "";
+            animationContainer.innerHTML = '';
+            
+            hideAllGameScreens();
+            mainContainer.style.display = 'flex';
+            gameAreaFindWord.style.display = 'flex';
+
+            setupGrid();
+            displayWordList();
+            startTimerFindWord();
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        function startTimerFindWord() {
+            timeLeftFindWord = GAME_DURATION_FIND_WORD;
+            timeElFindWord.innerText = formatTime(timeLeftFindWord);
+            timerContainerFindWord.classList.remove('warning');
+            clearInterval(timerFindWord);
+            timerFindWord = setInterval(() => {
+                timeLeftFindWord--;
+                timeElFindWord.innerText = formatTime(timeLeftFindWord);
+                if (timeLeftFindWord <= 10 && timeLeftFindWord > 0) {
+                    timerContainerFindWord.classList.add('warning');
+                    playSound('tick');
+                }
+                if (timeLeftFindWord <= 0) {
+                    clearInterval(timerFindWord);
+                    endGameFindWord('timeup');
+                }
+            }, 1000);
+        }
+
+        function setupGrid() {
+            grid = Array(GRID_SIZE).fill(0).map(() => Array(GRID_SIZE).fill(''));
+            actualWordGrid.innerHTML = '';
+            actualWordGrid.style.gridTemplateColumns = `repeat(${GRID_SIZE}, 1fr)`;
+
+            placeWordsInGrid();
+            fillEmptyCells();
+
+            for (let r = 0; r < GRID_SIZE; r++) {
+                for (let c = 0; c < GRID_SIZE; c++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('word-cell');
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+                    cell.innerText = grid[r][c];
+                    // Mouse events
+                    cell.addEventListener('mousedown', onCellMouseDown);
+                    cell.addEventListener('mouseenter', onCellMouseEnter);
+                    cell.addEventListener('mouseup', onCellMouseUp);
+                    // Touch events
+                    cell.addEventListener('touchstart', onCellTouchStart, { passive: false });
+                    cell.addEventListener('touchmove', onCellTouchMove, { passive: false });
+                    cell.addEventListener('touchend', onCellTouchEnd);
+
+                    actualWordGrid.appendChild(cell);
+                }
+            }
+
+            document.addEventListener('mouseup', onGlobalMouseUp);
+            document.addEventListener('touchend', onGlobalTouchEnd);
+        }
+
+        function displayWordList() {
+            actualWordList.innerHTML = '';
+            WORDS_TO_FIND.forEach(word => {
+                const li = document.createElement('li');
+                li.innerText = word;
+                li.id = `word-list-${word.toLowerCase().replace(/\s/g, '')}`;
+                actualWordList.appendChild(li);
+            });
+        }
+
+        function getRandomChar() {
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            return alphabet[Math.floor(Math.random() * alphabet.length)];
+        }
+
+        function placeWordsInGrid() {
+            const directions = [
+                { dr: 0, dc: 1 },    // Horizontal (kiri ke kanan)
+                { dr: 1, dc: 0 },    // Vertical (atas ke bawah)
+                { dr: 0, dc: -1 },   // Horizontal reverse (kanan ke kiri)
+                { dr: -1, dc: 0 },   // Vertical reverse (bawah ke atas)
+                { dr: 1, dc: 1 },    // Diagonal (kanan bawah)
+                { dr: 1, dc: -1 },   // Diagonal (kiri bawah)
+                { dr: -1, dc: 1 },   // Diagonal (kanan atas)
+                { dr: -1, dc: -1 }   // Diagonal (kiri atas)
+            ];
+
+            const shuffledWords = [...WORDS_TO_FIND].sort(() => Math.random() - 0.5);
+
+            grid = Array(GRID_SIZE).fill(0).map(() => Array(GRID_SIZE).fill(''));
+
+            shuffledWords.forEach(word => {
+                const cleanWord = word.replace(/\s/g, '').toUpperCase();
+                let placed = false;
+                let attempts = 0;
+                const maxAttemptsPerWord = 1000;
+
+                while (!placed && attempts < maxAttemptsPerWord) {
+                    const startRow = Math.floor(Math.random() * GRID_SIZE);
+                    const startCol = Math.floor(Math.random() * GRID_SIZE);
+                    const dir = directions[Math.floor(Math.random() * directions.length)];
+
+                    if (canPlaceWord(cleanWord, startRow, startCol, dir)) {
+                        for (let i = 0; i < cleanWord.length; i++) {
+                            const r = startRow + i * dir.dr;
+                            const c = startCol + i * dir.dc;
+                            grid[r][c] = cleanWord[i];
+                        }
+                        placed = true;
+                    }
+                    attempts++;
+                }
+            });
+        }
+
+        function canPlaceWord(word, startRow, startCol, dir) {
+            for (let i = 0; i < word.length; i++) {
+                const r = startRow + i * dir.dr;
+                const c = startCol + i * dir.dc;
+
+                if (r < 0 || r >= GRID_SIZE || c < 0 || c >= GRID_SIZE) {
+                    return false;
+                }
+
+                if (grid[r][c] !== '' && grid[r][c] !== word[i]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function fillEmptyCells() {
+            for (let r = 0; r < GRID_SIZE; r++) {
+                for (let c = 0; c < GRID_SIZE; c++) {
+                    if (grid[r][c] === '') {
+                        grid[r][c] = getRandomChar();
+                    }
+                }
+            }
+        }
+        
+        function getCellsBetween(start, end) {
+            const cells = [];
+            const r1 = start.row, c1 = start.col;
+            const r2 = end.row, c2 = end.col;
+
+            const dr = r2 - r1;
+            const dc = c2 - c1;
+
+            if (dr === 0 || dc === 0 || Math.abs(dr) === Math.abs(dc)) {
+                const numSteps = Math.max(Math.abs(dr), Math.abs(dc));
+                const stepR = numSteps === 0 ? 0 : dr / numSteps;
+                const stepC = numSteps === 0 ? 0 : dc / numSteps;
+
+                for (let i = 0; i <= numSteps; i++) {
+                    cells.push({
+                        row: r1 + i * stepR,
+                        col: c1 + i * stepC
+                    });
+                }
+            }
+            return cells;
+        }
+
+
+        function onCellMouseDown(e) {
+            isSelecting = true;
+            const cell = e.target;
+            const row = parseInt(cell.dataset.row);
+            const col = parseInt(cell.dataset.col);
+            startCellCoords = { row, col };
+            currentSelection = [{ row, col }];
+            highlightSelection();
+        }
+
+        function onCellMouseEnter(e) {
+            if (!isSelecting || !startCellCoords) return;
+            const cell = e.target;
+            const row = parseInt(cell.dataset.row);
+            const col = parseInt(cell.dataset.col);
+
+            const tempSelection = getCellsBetween(startCellCoords, { row, col });
+            
+            if (tempSelection.length > 0) {
+                currentSelection = tempSelection;
+                highlightSelection();
+            }
+        }
+
+
+        function highlightSelection() {
+            document.querySelectorAll('.word-cell').forEach(cell => {
+                if (!cell.classList.contains('found')) {
+                    cell.classList.remove('highlight');
+                }
+            });
+            currentSelection.forEach(pos => {
+                const cell = document.querySelector(`.word-cell[data-row="${pos.row}"][data-col="${pos.col}"]`);
+                if (cell && !cell.classList.contains('found')) {
+                    cell.classList.add('highlight');
+                }
+            });
+        }
+
+        function unhighlightAll() {
+            document.querySelectorAll('.word-cell').forEach(cell => {
+                cell.classList.remove('highlight');
+            });
+        }
+
+        function onCellMouseUp(e) {
+            if (isSelecting) {
+                isSelecting = false;
+                checkWord();
+                currentSelection = [];
+                startCellCoords = null;
+                unhighlightAll();
+            }
+        }
+
+        function onGlobalMouseUp(e) {
+            if (isSelecting) {
+                isSelecting = false;
+                checkWord();
+                currentSelection = [];
+                startCellCoords = null; 
+                unhighlightAll();
+            }
+        }
+
+        function onCellTouchStart(e) {
+            e.preventDefault();
+            isSelecting = true;
+            const cell = e.target;
+            const row = parseInt(cell.dataset.row);
+            const col = parseInt(cell.dataset.col);
+            startCellCoords = { row, col };
+            currentSelection = [{ row, col }];
+            highlightSelection();
+        }
+
+        function onCellTouchMove(e) {
+            if (!isSelecting || !startCellCoords) return;
+            e.preventDefault();
+            const touch = e.touches[0];
+            const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+            const cell = targetElement ? targetElement.closest('.word-cell') : null;
+
+            if (cell) {
+                const row = parseInt(cell.dataset.row);
+                const col = parseInt(cell.dataset.col);
+
+                const tempSelection = getCellsBetween(startCellCoords, { row, col });
+                
+                if (tempSelection.length > 0) {
+                    currentSelection = tempSelection;
+                    highlightSelection();
+                }
+            }
+        }
+
+
+        function onCellTouchEnd(e) {
+            if (isSelecting) {
+                isSelecting = false;
+                checkWord();
+                currentSelection = [];
+                startCellCoords = null; 
+                unhighlightAll();
+            }
+        }
+
+        function onGlobalTouchEnd(e) {
+            if (isSelecting) {
+                isSelecting = false;
+                checkWord();
+                currentSelection = [];
+                startCellCoords = null; 
+                unhighlightAll();
+            }
+        }
+
+        function checkWord() {
+            if (currentSelection.length === 0) return;
+
+            let selectedWord = "";
+            currentSelection.forEach(pos => {
+                selectedWord += grid[pos.row][pos.col];
+            });
+
+            const reversedSelectedWord = selectedWord.split('').reverse().join('');
+
+            let foundExactMatch = false;
+            let wordIndex = -1;
+
+            for (let i = 0; i < WORDS_TO_FIND.length; i++) {
+                const targetWord = WORDS_TO_FIND[i].replace(/\s/g, '').toUpperCase();
+                if (targetWord === selectedWord || targetWord === reversedSelectedWord) {
+                    foundExactMatch = true;
+                    wordIndex = i;
+                    break;
+                }
+            }
+
+            if (foundExactMatch && !foundWords.has(WORDS_TO_FIND[wordIndex])) {
+                playSound('correct');
+                feedbackElFindWord.innerText = `Kata "${WORDS_TO_FIND[wordIndex]}" ditemukan!`;
+                feedbackElFindWord.style.color = '#28a745';
+                foundWords.add(WORDS_TO_FIND[wordIndex]);
+                wordsFoundCountEl.innerText = foundWords.size;
+                
+                currentSelection.forEach(pos => {
+                    const cell = document.querySelector(`.word-cell[data-row="${pos.row}"][data-col="${pos.col}"]`);
+                    if (cell) {
+                        cell.classList.add('found');
+                        cell.classList.remove('highlight');
+                    }
+                });
+
+                const listItem = document.getElementById(`word-list-${WORDS_TO_FIND[wordIndex].toLowerCase().replace(/\s/g, '')}`);
+                if (listItem) {
+                    listItem.classList.add('found-word');
+                }
+
+                if (foundWords.size === WORDS_TO_FIND.length) {
+                    clearInterval(timerFindWord);
+                    setTimeout(() => endGameFindWord('win'), 500);
+                }
+            } else if (selectedWord.length > 1) {
+                playSound('wrong');
+                feedbackElFindWord.innerText = "Bukan kata yang dicari!";
+                feedbackElFindWord.style.color = '#dc3545';
+            }
+            setTimeout(() => { feedbackElFindWord.innerText = "" }, 1500);
+        }
+
+        function endGameFindWord(reason) {
+            gameAreaFindWord.style.display = 'none';
+            endScreenFindWord.style.display = 'block';
+            finalWordsFoundEl.innerText = `${foundWords.size} / ${WORDS_TO_FIND.length}`;
+            
+            if (reason === 'timeup') {
+                playSound('wrong');
+                finalTitleFindWord.innerText = "Waktu Habis!";
+                finalMessageFindWord.innerText = "Waktunya habis! Coba lagi untuk menemukan semua kata.";
+                nextLevelBtnMatching.style.display = 'none';
+                restartBtnFindWord.style.display = 'inline-block';
+            } else if (reason === 'win') {
+                playSound('level_up');
+                finalTitleFindWord.innerText = "Level 2 Berhasil!";
+                finalMessageFindWord.innerText = "Kamu berhasil menemukan semua kata tersembunyi! Mari lanjutkan ke Level 3!";
+                createFallingStars();
+                nextLevelBtnMatching.style.display = 'inline-block';
+                restartBtnFindWord.style.display = 'none';
+            }
+        }
+
+        // --- Matching Game Logic (Level 3) ---
+        const GAME_DURATION_MATCHING = 60;
+        const NUM_PAIRS_TO_SHOW = 5;
+
+        const ALL_ISLANDS = [
+            { id: 'sumatera', name: 'Sumatera', image: 'https://cdn-icons-png.flaticon.com/512/4915/4915691.png' },
+            { id: 'jawa', name: 'Jawa', image: 'https://cdn-icons-png.flaticon.com/512/8479/8479881.png'},
+            { id: 'kalimantan', name: 'Kalimantan', image: 'https://cdn-icons-png.flaticon.com/512/4915/4915695.png' },
+            { id: 'sulawesi', name: 'Sulawesi', image: 'https://cdn-icons-png.flaticon.com/512/4915/4915698.png' },
+            { id: 'papua', name: 'Papua', image: 'https://cdn-icons-png.flaticon.com/512/4915/4915326.png' },
+        ];
+
+        const imagePoolDiv = document.getElementById('image-pool');
+        const namePoolDiv = document.getElementById('name-pool');
+        const matchesFoundCountEl = document.getElementById('matches-found-count');
+        const totalMatchesCountEl = document.getElementById('total-matches-count');
+        const timeElMatching = document.getElementById('time-matching');
+        const timerContainerMatching = document.getElementById('timer-container-matching');
+        const feedbackElMatching = document.getElementById('feedback-matching');
+        const finalTitleMatching = document.getElementById('final-title-matching');
+        const finalMatchesFoundEl = document.getElementById('final-matches-found');
+        const finalMessageMatching = document.getElementById('final-message-matching');
+
+        let currentPairs = [];
+        let matchesFound = 0;
+        let selectedNameCard = null;
+        let selectedImageCard = null;
+        let timerMatching, timeLeftMatching;
+
+        restartBtnMatching.addEventListener('click', () => { playSound('click'); startGameMatching(); });
+        document.getElementById('start-btn-matching').addEventListener('click', () => { initAudio(); playSound('click'); startGameMatching(); });
+
+        function startLevel3() {
+            hideAllGameScreens();
+            mainContainer.style.display = 'flex';
+            startScreenMatching.style.display = 'block';
+        }
+
+        function startGameMatching() {
+            matchesFound = 0;
+            matchesFoundCountEl.innerText = matchesFound;
+            feedbackElMatching.innerText = "";
+            animationContainer.innerHTML = '';
+            
+            hideAllGameScreens();
+            mainContainer.style.display = 'flex';
+            gameAreaMatching.style.display = 'flex';
+
+            generateMatchingGamePairs();
+            displayMatchingGameElements();
+            startTimerMatching();
+        }
+
+        function startTimerMatching() {
+            timeLeftMatching = GAME_DURATION_MATCHING;
+            timeElMatching.innerText = formatTime(timeLeftMatching);
+            timerContainerMatching.classList.remove('warning');
+            clearInterval(timerMatching);
+            timerMatching = setInterval(() => {
+                timeLeftMatching--;
+                timeElMatching.innerText = formatTime(timeLeftMatching);
+                if (timeLeftMatching <= 10 && timeLeftMatching > 0) {
+                    timerContainerMatching.classList.add('warning');
+                    playSound('tick');
+                }
+                if (timeLeftMatching <= 0) {
+                    clearInterval(timerMatching);
+                    endGameMatching('timeup');
+                }
+            }, 1000);
+        }
+
+        function generateMatchingGamePairs() {
+            const shuffledCharacters = [...ALL_ISLANDS].sort(() => Math.random() - 0.5);
+            currentPairs = shuffledCharacters.slice(0, NUM_PAIRS_TO_SHOW);
+            totalMatchesCountEl.innerText = NUM_PAIRS_TO_SHOW;
+        }
+
+        function displayMatchingGameElements() {
+            imagePoolDiv.innerHTML = '<h3>Peta Pulau</h3>';
+            namePoolDiv.innerHTML = '<h3>Nama Pulau</h3>';
+
+            const shuffledImages = [...currentPairs].sort(() => Math.random() - 0.5);
+            const shuffledNames = [...currentPairs].sort(() => Math.random() - 0.5);
+
+            shuffledNames.forEach(char => {
+                const nameCard = document.createElement('div');
+                nameCard.className = 'name-card';
+                nameCard.dataset.id = char.id;
+                nameCard.innerText = char.name;
+                namePoolDiv.appendChild(nameCard);
+                nameCard.addEventListener('click', onNameCardClick);
+            });
+
+            shuffledImages.forEach(char => {
+                const imgCard = document.createElement('div');
+                imgCard.className = 'image-card';
+                imgCard.dataset.id = char.id;
+                const img = document.createElement('img');
+                img.src = char.image;
+                img.alt = char.name;
+                imgCard.appendChild(img);
+                imagePoolDiv.appendChild(imgCard);
+                imgCard.addEventListener('click', onImageCardClick);
+            });
+        }
+
+        function onNameCardClick(e) {
+            const clickedCard = e.currentTarget;
+            if (clickedCard.classList.contains('found-match')) return;
+
+            if (selectedNameCard) {
+                selectedNameCard.classList.remove('selected');
+            }
+            selectedNameCard = clickedCard;
+            selectedNameCard.classList.add('selected');
+            
+            if(selectedImageCard) {
+                handleMatchingAttempt(selectedNameCard, selectedImageCard);
+            }
+        }
+
+        function onImageCardClick(e) {
+            const clickedCard = e.currentTarget;
+            if (clickedCard.classList.contains('correct')) return;
+
+            if (selectedImageCard) {
+                selectedImageCard.classList.remove('selected');
+            }
+            selectedImageCard = clickedCard;
+            
+            if(selectedNameCard) {
+                handleMatchingAttempt(selectedNameCard, selectedImageCard);
+            }
+        }
+
+
+        function handleMatchingAttempt(nameCard, imageCard) {
+            const nameId = nameCard.dataset.id;
+            const imageId = imageCard.dataset.id;
+
+            if (nameId === imageId) {
+                playSound('correct');
+                feedbackElMatching.innerText = "Benar!";
+                feedbackElMatching.style.color = '#28a745';
+                matchesFound++;
+                matchesFoundCountEl.innerText = matchesFound;
+
+                nameCard.classList.add('found-match');
+                nameCard.style.pointerEvents = 'none';
+                nameCard.style.opacity = '0.5';
+
+                imageCard.classList.add('correct');
+                imageCard.style.pointerEvents = 'none';
+
+                if (matchesFound === NUM_PAIRS_TO_SHOW) {
+                    clearInterval(timerMatching);
+                    setTimeout(() => endGameMatching('win'), 500);
+                }
+            } else {
+                playSound('wrong');
+                feedbackElMatching.innerText = "Kurang Tepat!";
+                feedbackElMatching.style.color = '#dc3545';
+                imageCard.classList.add('incorrect');
+                setTimeout(() => {
+                    imageCard.classList.remove('incorrect');
+                }, 800);
+            }
+            
+            if (selectedNameCard) selectedNameCard.classList.remove('selected');
+            selectedNameCard = null;
+            selectedImageCard = null;
+            setTimeout(() => { feedbackElMatching.innerText = "" }, 1500);
+        }
+
+
+        function endGameMatching(reason) {
+            gameAreaMatching.style.display = 'none';
+            endScreenMatching.style.display = 'block';
+            finalMatchesFoundEl.innerText = `${matchesFound} / ${NUM_PAIRS_TO_SHOW}`;
+            
+            if (reason === 'timeup') {
+                playSound('wrong');
+                finalTitleMatching.innerText = "Waktu Habis!";
+                finalMessageMatching.innerText = "Waktunya habis! Coba lagi untuk menjodohkan semua pulau.";
+            } else if (reason === 'win') {
+                playSound('level_up');
+                finalTitleMatching.innerText = "Level 3 Berhasil!";
+                finalMessageMatching.innerText = "Kamu berhasil menjodohkan semua pulau dengan benar!";
+                createFallingStars();
+            }
+        }
+
+        // --- EVENT LISTENERS for Welcome Screen ---
+        document.getElementById('startButton').addEventListener('click', () => {
+            initAudio(); 
+            playSound('click');
+            hideAllGameScreens();
+            mainContainer.style.display = 'flex'; 
+            startScreenDragDrop.style.display = 'block'; 
+        });
+        
+        document.getElementById('petunjukBtn').addEventListener('click', () => { 
+            initAudio(); 
+            playSound('click');
+            document.getElementById('petunjukModal').style.display = 'flex'; 
+        });
+        
+        document.getElementById('tujuanBtn').addEventListener('click', () => { 
+            initAudio(); 
+            playSound('click');
+            document.getElementById('tujuanModal').style.display = 'flex'; 
+        });
+		
+        document.getElementById('sumberBtn').addEventListener('click', () => { 
+            initAudio(); 
+            playSound('click');
+            document.getElementById('sumberModal').style.display = 'flex'; 
+        });
+        
+        document.getElementById('pengembangBtn').addEventListener('click', () => { 
+            initAudio(); 
+            playSound('click');
+            document.getElementById('pengembangModal').style.display = 'flex';
+        });
+
+        document.querySelectorAll('.close').forEach(button => {
+            button.onclick = function() {
+                let modalToClose = this.closest('.modal');
+                if(modalToClose) {
+                    modalToClose.style.display = "none";
+                }
+            }
+        });
+
+        window.onclick = (event) => {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
+            }
+        };
+
+		document.getElementById('next-level-btn-puzzle').addEventListener('click', () => { 
+			initAudio(); 
+			playSound('click'); 
+			startLevel4(); 
+		});
+
+
+        // --- Logika untuk Efek 3D pada Gambar Profil ---
+        const profilePicContainer = document.querySelector('.profile-pic-container');
+        if (profilePicContainer) {
+            const profilePic = profilePicContainer.querySelector('img');
+            const maxRotate = 25; 
+
+            profilePicContainer.addEventListener('mousemove', (e) => {
+                const rect = profilePicContainer.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+
+                const rotateY = ((mouseX / rect.width) - 0.5) * 2 * maxRotate;
+                const rotateX = (((mouseY / rect.height) - 0.5) * 2 * maxRotate) * -1;
+                
+                profilePic.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.1)`;
+            });
+
+            profilePicContainer.addEventListener('mouseleave', () => {
+                profilePic.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+            });
+        }
+
+        // Latar belakang angka (canvas)
+        const numberBgCanvas = document.getElementById('numberCanvas');
+        const numberBgCtx = numberBgCanvas.getContext('2d');
+
+        function resizeNumberBgCanvas() {
+            numberBgCanvas.width = window.innerWidth;
+            numberBgCanvas.height = window.innerHeight;
+            drawBackground();
+        }
+
+        window.addEventListener('load', resizeNumberBgCanvas);
+        window.addEventListener('resize', resizeNumberBgCanvas);
+
+        const colors = {
+            greenishGrey: '#A4C49F',
+            yellow: '#F8D960',
+            orange: '#FF9F5F',
+            blueishGreen: '#8CC4C3'
+        };
+
+        function drawBackground() {
+            const width = numberBgCanvas.width;
+            const height = numberBgCanvas.height;
+
+            numberBgCtx.fillStyle = colors.blueishGreen;
+            numberBgCtx.fillRect(0, 0, width, height);
+
+            numberBgCtx.fillStyle = colors.greenishGrey;
+            numberBgCtx.beginPath();
+            numberBgCtx.moveTo(0, 0);
+            numberBgCtx.lineTo(width * 0.65, 0);
+            numberBgCtx.quadraticCurveTo(width * 0.4, height * 0.3, width * 0.1, height);
+            numberBgCtx.lineTo(0, height);
+            numberBgCtx.closePath();
+            numberBgCtx.fill();
+
+            numberBgCtx.fillStyle = colors.yellow;
+            numberBgCtx.beginPath();
+            numberBgCtx.moveTo(width * 0.30, 0);
+            numberBgCtx.lineTo(width * 0.90, 0);
+            numberBgCtx.quadraticCurveTo(width * 0.8, height * 0.4, width * 0.05, height);
+            numberBgCtx.lineTo(width * 0.05, height);
+            numberBgCtx.closePath();
+            numberBgCtx.fill();
+
+            numberBgCtx.fillStyle = colors.orange;
+            numberBgCtx.beginPath();
+            numberBgCtx.moveTo(width * 0.70, 0);
+            numberBgCtx.lineTo(width, 0);
+            numberBgCtx.lineTo(width, height * 0.80);
+            numberBgCtx.quadraticCurveTo(width * 0.7, height * 0.6, width * 0.40, height);
+            numberBgCtx.closePath();
+            numberBgCtx.fill();
+
+            drawIcons();
+        }
+		
+const icons = ['✈️', '🏨', '🌏', '🧭', '🗺️', '🚢', '🏛️', '🌴', '🌊', '✈️', '🏝️'];
+        const iconsData = [
+            { icon: icons[0], color: '#8bc34a', size: 50, rot: 0, x: 0.06, y: 0.18 },
+            { icon: icons[1], color: '#fb8c00', size: 200, rot: -15, x: 0.20, y: 0.48 },
+            { icon: icons[2], color: '#03a9f4', size: 200, rot: 10, x: 0.40, y: 0.35 },
+            { icon: icons[3], color: '#607d8b', size: 150, rot: -25, x: 0.88, y: 0.90 },
+            { icon: icons[4], color: '#ef5350', size: 200, rot: 20, x: 0.65, y: 0.60 },
+            { icon: icons[5], color: '#e91e63', size: 75, rot: -8, x: 0.35, y: 0.60 },
+            { icon: icons[6], color: '#9c27b0', size: 60, rot: 5, x: 0.85, y: 0.50 },
+            { icon: icons[7], color: '#4CAF50', size: 80, rot: 30, x: 0.85, y: 0.10 },
+            { icon: icons[8], color: '#ffeb3b', size: 60, rot: 10, x: 0.40, y: 0.90 },
+            { icon: icons[9], color: '#7cb342', size: 150, rot: 0, x: 0.65, y: 0.85 },
+            { icon: icons[10], color: '#7cb342', size: 50, rot: 0, x: 0.85, y: 0.75 },
+            { icon: icons[0], color: '#FF5733', size: 70, rot: 20, x: 0.25, y: 0.03 },
+            { icon: icons[1], color: '#DAF7A6', size: 60, rot: -5, x: 0.70, y: 0.05 },
+            { icon: icons[2], color: '#FFC300', size: 80, rot: 15, x: 0.58, y: 0.88 },
+            { icon: icons[3], color: '#C70039', size: 200, rot: -10, x: 0.90, y: 0.30 },
+            { icon: icons[4], color: '#FF33FF', size: 90, rot: 25, x: 0.02, y: 0.60 },
+            { icon: icons[5], color: '#33FFCE', size: 70, rot: 0, x: 0.50, y: 0.15 },
+            { icon: icons[6], color: '#00FF00', size: 65, rot: -20, x: 0.95, y: 0.75 },
+            { icon: icons[7], color: '#8A2BE2', size: 75, rot: 10, x: 0.30, y: 0.92 },
+            { icon: icons[8], color: '#BA55D3', size: 55, rot: 8, x: 0.35, y: 0.98 },
+            { icon: icons[9], color: '#FF4500', size: 120, rot: -3, x: 0.88, y: 0.60 }
+        ];
+
+		function drawIcons() {
+            iconsData.forEach(data => {
+                const x = numberBgCanvas.width * data.x;
+                const y = numberBgCanvas.height * data.y;
+
+                numberBgCtx.save();
+                numberBgCtx.translate(x, y);
+                numberBgCtx.rotate(data.rot * Math.PI / 180);
+
+                numberBgCtx.font = `bold ${data.size}px Arial`;
+
+                numberBgCtx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+                numberBgCtx.shadowBlur = 5;
+                numberBgCtx.shadowOffsetX = 3;
+                numberBgCtx.shadowOffsetY = 3;
+
+                numberBgCtx.fillStyle = data.color;
+                numberBgCtx.fillText(data.icon, 0, 0);
+
+                numberBgCtx.restore();
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            hideAllGameScreens(); 
+            welcomeScreen.style.display = 'flex';
+            resizeNumberBgCanvas();
+        });
+    </script>
+</body>
+</html>
