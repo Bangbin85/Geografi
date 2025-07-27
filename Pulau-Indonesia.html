@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Letak Geografis Indonesia</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,11 +51,12 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 0; /* Ubah padding menjadi 0 agar elemen bisa penuh layar */
+            padding: 15px; /* Add padding for small screens */
             box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
-            overflow: hidden; /* Penting untuk mencegah scroll */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow-y: auto;   /* Allow vertical scroll */
             background-color: #f0f0f0; /* Warna fallback jika canvas belum terload */
         }
 
@@ -63,7 +64,7 @@
             max-width: 1000px;
             width: 100%;
             background: var(--container-bg);
-            padding: 20px 30px;
+            padding: 20px; /* Adjusted padding */
             border-radius: 25px;
             box-shadow: 0 15px 30px rgba(0,0,0,0.15);
             border: 5px solid white;
@@ -87,13 +88,14 @@
         h1 {
             font-family: var(--font-title);
             color: var(--title-color);
-            font-size: clamp(2.5rem, 7vw, 3.5rem);
+            font-size: clamp(2rem, 6vw, 3.5rem); /* Responsive font size */
             text-shadow: 2px 2px 0px white, 4px 4px 0px rgba(0,0,0,0.1);
         }
         
         h2 {
             font-family: var(--font-title);
             color: #5D9CEC;
+            font-size: clamp(1.5rem, 5vw, 2.5rem); /* Responsive font size */
         }
 
         /* Styles for welcome screen elements */
@@ -103,27 +105,23 @@
             justify-content: center;
             align-items: center;
             width: 100%;
-            height: 100vh; /* Pastikan welcome-screen mengambil tinggi penuh viewport */
-            position: relative; /* Penting agar z-index bekerja */
-            z-index: 1; /* Di atas canvas dan bubbles */
-            padding: 15px; /* Tambahkan padding agar konten tidak mepet tepi */
-            box-sizing: border-box; /* Pastikan padding dihitung dalam lebar/tinggi */
+            min-height: 100vh; /* Use min-height to allow scrolling if content overflows */
+            position: relative;
+            z-index: 1;
+            padding: 15px;
+            box-sizing: border-box;
         }
 
-        #welcome-screen h1 { /* Override for welcome screen title */
+        #welcome-screen h1 {
             font-family: 'Fredoka One', cursive;
-            font-size: clamp(3rem, 5vw, 4rem); /* Sesuaikan ukuran font agar lebih pas dengan gambar */
+            font-size: clamp(2.5rem, 8vw, 4rem);
             color: #d9534f;
             text-shadow:
-                -4px -4px 0 var(--white),
-                4px -4px 0 var(--white),
-                -4px 4px 0 var(--white),
-                4px 4px 0 var(--white),
-                0 -4px 0 var(--white),
-                0 4px 0 var(--white),
-                -4px 0 0 var(--white),
-                4px 0 0 var(--white),
-                6px 6px 0 #000000;
+                -2px -2px 0 var(--white),
+                2px -2px 0 var(--white),
+                -2px 2px 0 var(--white),
+                2px 2px 0 var(--white),
+                4px 4px 0 #000000;
             margin-bottom: 0;
         }
 
@@ -135,24 +133,32 @@
         }
 
         #welcome-screen p {
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 4vw, 1.2rem);
             color: #34495e;
             margin-top: -10px;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
-        .game-info { /* Reusable class for game info */
+        .game-info {
             display: flex;
+            flex-direction: column; /* Stack on small screens */
             justify-content: space-around;
             align-items: center;
             width: 100%;
             margin-bottom: 20px;
             font-family: var(--font-title);
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            gap: 10px;
         }
 
-        #score-container-drag-drop { color: #27AE60; } /* Nephritis (Hijau) */
-        #timer-container-drag-drop, #timer-container-find-bangbin, #timer-container-matching { color: #E74C3C; } /* Alizarin (Merah) */
+        @media (min-width: 768px) {
+            .game-info {
+                flex-direction: row; /* Row on larger screens */
+            }
+        }
+
+        #score-container-drag-drop { color: #27AE60; }
+        #timer-container-drag-drop, #timer-container-find-bangbin, #timer-container-matching { color: #E74C3C; }
         
         #timer-container-drag-drop.warning, #timer-container-find-bangbin.warning, #timer-container-matching.warning {
             color: #c0392b;
@@ -175,7 +181,7 @@
 
         #statements-container {
             background-color: rgba(236, 240, 241, 0.7);
-            padding: 20px;
+            padding: 15px;
             border-radius: 15px;
             border: 2px dashed #bdc3c7;
             width: 100%;
@@ -184,19 +190,19 @@
         #cards-pool {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 10px;
             justify-content: center;
             min-height: 50px;
         }
 
         .statement-card {
             background-color: var(--card-bg);
-            padding: 12px 18px;
+            padding: 8px 12px; /* Adjusted padding */
             border-radius: 12px;
             border: 3px solid var(--card-border);
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             cursor: grab;
-            font-size: 1.1rem; /* Disesuaikan untuk teks nama */
+            font-size: clamp(0.7rem, 2.5vw, 1rem); /* Adjusted font size */
             transition: transform 0.2s, box-shadow 0.2s;
             touch-action: none;
         }
@@ -212,16 +218,18 @@
 
         #categories-container {
             display: flex;
+            flex-direction: row; /* Keep as row on all screen sizes */
             justify-content: center;
-            gap: 20px;
+            gap: 10px; /* Adjusted gap */
             width: 100%;
-            flex-wrap: wrap;
+            align-items: stretch; /* Make boxes have same height */
         }
-
+        
         .category-box {
-            width: 250px;
+            flex: 1; /* Allow boxes to grow and shrink equally */
+            min-width: 90px; /* Prevent boxes from becoming too narrow */
             min-height: 180px;
-            padding: 20px;
+            padding: 15px 10px;
             border-radius: 20px;
             transition: transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 8px 15px rgba(0,0,0,0.1);
@@ -231,25 +239,26 @@
         }
         
         .category-box.drag-over {
-            transform: scale(1.08) translateY(-5px);
+            transform: scale(1.05);
             box-shadow: 0 12px 20px rgba(0,0,0,0.2);
         }
         
         .category-box h2 {
             font-family: var(--font-title);
             margin-top: 0;
+            font-size: clamp(1rem, 4vw, 1.2rem);
             color: white;
             text-shadow: 2px 2px 3px rgba(0,0,0,0.3);
             pointer-events: none;
         }
 
         /* Warna Baru untuk Kategori Geografis */
-        #box-astronomis { background: #880808; } /* Maroon */
-        #box-utara { background: #E67E22; } /* Carrot */
-        #box-selatan-timur { background: #16A085; } /* Green Sea */
+        #box-astronomis { background: #880808; }
+        #box-utara { background: #E67E22; }
+        #box-selatan-timur { background: #16A085; }
 
         #feedback-drag-drop, #feedback-find-bangbin, #feedback-matching, #feedback-puzzle {
-            font-size: 1.8rem;
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
             font-weight: bold;
             height: 40px;
             font-family: var(--font-title);
@@ -260,15 +269,15 @@
             background-color: var(--btn-bg);
             color: white;
             font-family: var(--font-title);
-            font-size: 1.8rem;
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
             border: none;
             border-radius: 15px;
-            padding: 15px 35px;
+            padding: 12px 25px;
             cursor: pointer;
             transition: transform 0.1s, box-shadow 0.1s;
             box-shadow: 0 6px 0 var(--btn-shadow);
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-            margin-top: 20px;
+            margin-top: 10px;
             margin-bottom: 10px;
         }
         .btn-3d:hover { transform: translateY(-2px); box-shadow: 0 8px 0 var(--btn-shadow); }
@@ -287,21 +296,20 @@
             z-index: 9999;
         }
 
-/* --- Common End Screen Styles --- */
-#end-screen-drag-drop,
-#end-screen-find-bangbin,
-#end-screen-matching,
-#end-screen-puzzle {
-    display: none; /* Hidden by default, shown by JS */
-    flex-direction: column;
-    justify-content: center; /* Vertically center content */
-    align-items: center; /* Horizontally center content */
-    width: 100%;
-    height: 100%; /* Take full height of main-container */
-    text-align: center;
-    box-sizing: border-box; /* Include padding in dimensions */
-    padding: 20px; /* Add some padding */
-}
+        /* --- Common End Screen Styles --- */
+        #end-screen-drag-drop,
+        #end-screen-find-bangbin,
+        #end-screen-matching,
+        #end-screen-puzzle {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+            padding: 20px;
+        }
 
         .star {
             position: absolute;
@@ -319,44 +327,48 @@
         /* --- Find bangbin Game Specific Styles --- */
         #find-bangbin-game-layout {
             display: flex;
-            flex-direction: row; /* Berdampingan secara horizontal */
-            gap: 15px; /* Kurangi jarak antar grid dan daftar kata */
+            flex-direction: column; /* Stack on small screens by default */
+            gap: 15px;
             justify-content: center;
-            align-items: flex-start; /* Sejajarkan ke atas */
+            align-items: center;
             width: 100%;
-            flex-wrap: wrap; /* Izinkan pindah baris di layar kecil */
-            max-width: 900px; /* Batasi lebar maksimum agar tidak terlalu menyebar di layar sangat lebar */
+        }
+        
+        @media (min-width: 768px) {
+            #find-bangbin-game-layout {
+                flex-direction: row; /* Side-by-side on larger screens */
+                align-items: flex-start;
+                max-width: 900px;
+            }
         }
 
         #bangbin-grid-container {
-            flex: 2; /* Akan mengambil porsi lebih besar dari ruang yang tersedia */
-            min-width: 250px; /* Sedikit kurangi min-width agar lebih fleksibel */
+            flex: 2;
+            width: 100%;
+            max-width: 500px; /* Limit size */
             background-color: var(--bangbin-grid-bg);
-            padding: 10px; /* Kurangi padding di container grid */
+            padding: 10px;
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         #bangbin-grid {
             display: grid;
-            /* Border langsung di grid, bukan di cell */
+            grid-template-columns: repeat(12, 1fr);
             border: 2px solid var(--bangbin-cell-border);
             border-radius: 8px;
             overflow: hidden;
-            /* Penting: Atur ukuran grid secara eksplisit atau biarkan clamp di cell yang bekerja */
+            gap: 1px;
+            background-color: var(--bangbin-cell-border);
         }
 
         .bangbin-cell {
-            /* Gunakan ukuran tetap untuk cell agar konsisten */
-            width: 35px; /* Atur ukuran tetap, bisa disesuaikan */
-            height: 35px; /* Atur ukuran tetap, bisa disesuaikan */
-
+            aspect-ratio: 1 / 1; /* CORRECTED: Modern way to create square cells */
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 0.5px solid var(--bangbin-cell-border); /* Kurangi ketebalan border cell */
             font-family: var(--font-body);
-            font-size: 1.3rem; /* Sesuaikan ukuran font agar pas */
+            font-size: clamp(0.7rem, 2.5vw, 1.3rem); /* Responsive font */
             font-weight: bold;
             cursor: pointer;
             background-color: white;
@@ -366,14 +378,12 @@
 
         #bangbin-list-container {
             flex: 1;
-            max-width: 280px; /* Sesuaikan max-width */
-            min-width: 180px; /* Sesuaikan min-width */
+            width: 100%;
+            max-width: 300px;
             background-color: rgba(236, 240, 241, 0.7);
             padding: 15px;
             border-radius: 15px;
             border: 2px dashed #bdc3c7;
-            width: 100%;
-            margin-top: 0;
         }
 
         #bangbin-list {
@@ -382,12 +392,14 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 8px; /* Kurangi jarak antar kata di daftar */
+            gap: 8px;
         }
 
         #bangbin-list li {
-            padding: 7px 12px; /* Sesuaikan padding */
-            font-size: 1rem; /* Sesuaikan ukuran font */
+            padding: 7px 12px;
+            font-size: clamp(0.8rem, 3vw, 1rem);
+            background-color: #e0e0e0;
+            border-radius: 8px;
         }
 
         .bangbin-cell.highlight {
@@ -401,105 +413,74 @@
         }
 
         @keyframes found-animation {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        #bangbin-list-container {
-            flex: 1; /* Akan mengambil porsi lebih kecil dari ruang yang tersedia */
-            max-width: 300px; /* Batasi lebar daftar kata agar tidak terlalu lebar */
-            min-width: 200px; /* Lebar minimum agar tidak terlalu sempit */
-            background-color: rgba(236, 240, 241, 0.7);
-            padding: 15px;
-            border-radius: 15px;
-            border: 2px dashed #bdc3c7;
-            width: 100%; /* Penting untuk flex-wrap */
-            margin-top: 0; /* Pastikan ini 0 saat berdampingan */
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
 
         #bangbin-list li.found-bangbin {
             background-color: var(--bangbin-list-found);
+            color: white;
             text-decoration: line-through;
             opacity: 0.7;
-        }
-
-        /* Responsif untuk layar kecil */
-        @media (max-width: 768px) {
-            #find-bangbin-game-layout { /* Targetkan wrapper flexbox utama */
-                flex-direction: column; /* Ubah menjadi kolom pada layar kecil */
-                align-items: center; /* Pusatkan secara horizontal dalam mode kolom */
-            }
-
-            #bangbin-grid-container,
-            #bangbin-list-container {
-                flex: none; /* Nonaktifkan fleksibilitas lebar */
-                width: 100%; /* Ambil lebar penuh */
-                max-width: 400px; /* Batasi lebar total agar tidak terlalu lebar di tablet */
-            }
         }
         
         /* --- Matching Game Specific Styles (Level 3) --- */
         #matching-game-layout {
             display: flex;
-            flex-direction: column; /* Default to column for small screens */
+            flex-direction: column;
             gap: 20px;
             justify-content: center;
-            align-items: center; /* Center items in column layout */
+            align-items: center;
             width: 100%;
-            flex-wrap: wrap; /* Allow wrapping */
-            max-width: 1000px;
             margin-top: 20px;
         }
 
         #name-pool {
-            order: 1; /* Make name pool appear first (on top) */
-            background-color: rgba(236, 240, 241, 0.7); /* Same as statements-container for consistent look */
-            padding: 20px;
+            order: 1;
+            background-color: rgba(236, 240, 241, 0.7);
+            padding: 15px;
             border-radius: 15px;
             border: 2px dashed #bdc3c7;
-            width: 100%; /* Take full width */
-            max-width: 800px; /* Limit max width for readability */
+            width: 100%;
+            max-width: 800px;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 15px;
-            min-height: 80px; /* Adjust min height as needed */
+            gap: 10px;
+            min-height: 80px;
         }
 
         #image-pool {
-            order: 2; /* Make image pool appear second (on bottom) */
+            order: 2;
             background-color: var(--match-bg);
             padding: 15px;
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            width: 100%; /* Take full width */
-            max-width: 800px; /* Match width of name-pool */
+            width: 100%;
+            max-width: 800px;
             display: flex;
-            flex-direction: row; /* Ensure images are in a row */
             flex-wrap: wrap;
             justify-content: center;
             gap: 15px;
-            min-height: 200px; /* Adjust min height as needed */
+            min-height: 150px;
         }
         
         #name-pool h3, #image-pool h3 {
-            width: 100%; /* Make heading take full width */
+            width: 100%;
             text-align: center;
-            margin-top: 0;
-            margin-bottom: 15px;
+            margin: 0 0 15px 0;
             font-family: var(--font-title);
             color: var(--text-color);
         }
 
         .image-card {
             background-color: white;
-            padding: 10px;
+            padding: 5px;
             border-radius: 10px;
             border: 2px solid var(--match-drop-border);
-            width: 100%;
-            max-width: 150px; /* Smaller image cards */
-            height: 150px; /* Smaller image cards */
+            width: clamp(100px, 25vw, 150px);
+            height: clamp(100px, 25vw, 150px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -511,13 +492,13 @@
         }
 
         .image-card img {
-            max-width: 100%;
-            max-height: 100%;
+            max-width: 90%;
+            max-height: 90%;
             display: block;
             object-fit: contain;
         }
         
-        .image-card.correct {
+        .image-card.correct, .image-card.incorrect {
             border-color: var(--match-correct-bg);
             background-color: var(--match-correct-bg);
         }
@@ -529,18 +510,16 @@
         .name-card {
             background-color: var(--match-card-bg);
             color: var(--text-color);
-            padding: 10px 15px; 
-            border-radius: 20px; 
+            padding: 8px 12px;
+            border-radius: 20px;
             border: 2px solid var(--match-card-border);
             cursor: grab;
-            font-size: 1.1rem; 
+            font-size: clamp(0.9rem, 3.5vw, 1.1rem);
             font-weight: bold;
             transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
             box-shadow: 0 3px 6px rgba(0,0,0,0.1);
             touch-action: none;
             text-align: center;
-            width: fit-content;
-            margin: 0 auto;
         }
 
         .name-card.selected {
@@ -549,39 +528,30 @@
             transform: scale(1.05);
         }
         
-        .name-card.dragging {
-            opacity: 0.7;
-            cursor: grabbing;
-            transform: scale(1.1);
-            position: fixed !important;
-            z-index: 1000;
-            pointer-events: none;
-        }
-
         .image-card::after {
             content: '';
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
-            font-size: 3rem;
+            font-size: clamp(2rem, 8vw, 3rem);
             opacity: 0;
             transition: transform 0.3s ease, opacity 0.3s ease;
             color: white;
             font-family: 'Font Awesome 6 Free';
             font-weight: 900;
             pointer-events: none;
+            width: clamp(40px, 15vw, 60px);
+            height: clamp(40px, 15vw, 60px);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .image-card.correct::after {
             content: "\f00c";
             background-color: rgba(40, 167, 69, 0.8);
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             transform: translate(-50%, -50%) scale(1);
             opacity: 1;
         }
@@ -589,12 +559,6 @@
         .image-card.incorrect::after {
             content: "\f00d";
             background-color: rgba(220, 53, 69, 0.8);
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             transform: translate(-50%, -50%) scale(1);
             opacity: 1;
         }
@@ -603,42 +567,47 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 10px;
-            padding-left: 20px;
-            padding-right: 10px;
-            box-sizing: border-box;
             position: relative;
+            margin-bottom: 10px;
         }
         .welcome-image {
-            position: absolute; /* Mengangkat gambar dari flow normal */
-            z-index: -1;    /* Menempatkan gambar di belakang teks */
-            top: 50%;       /* Posisikan di tengah secara vertikal */
-            left: -300px;
-            transform: translateY(-30%); /* Menyesuaikan posisi vertikal agar presisi */
-            max-width: 500px; /* Sesuaikan ukuran gambar */
-            height: auto;
-            object-fit: contain;
-            filter: drop-shadow(3px 3px 2px rgba(0,0,0,0.3)); /* Tambahkan bayangan untuk kesan lebih hidup */
+            display: none; /* Hide on small screens for better layout */
+        }
+        @media (min-width: 768px) {
+            .welcome-image {
+                display: block;
+                position: absolute;
+                z-index: -1;
+                top: 50%;
+                left: -250px;
+                transform: translateY(-40%);
+                max-width: 400px;
+                height: auto;
+                object-fit: contain;
+                filter: drop-shadow(3px 3px 2px rgba(0,0,0,0.3));
+            }
         }
         .welcome-buttons {
             display: flex;
-            gap: 15px;
+            flex-wrap: wrap; /* Allow buttons to wrap */
+            gap: 10px;
+            justify-content: center;
             margin-top: 20px;
         }
-        /* Latar Belakang Gelembung */
+        
         .bubble {
             position: absolute;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.3);
             animation: bubble-float 15s infinite ease-in-out;
             opacity: 0;
-            z-index: -1; /* Keep bubbles behind everything */
+            z-index: -1;
         }
         .bubble:nth-child(1) { width: 60px; height: 60px; left: 10%; animation-duration: 12s; animation-delay: 0s; }
         .bubble:nth-child(2) { width: 80px; height: 80px; left: 30%; animation-duration: 15s; animation-delay: 2s; }
-        .bubble:nth-child(3) { width: 280px; height: 280px; left: 50%; animation-duration: 10s; animation-delay: 1s; }
+        .bubble:nth-child(3) { width: 180px; height: 180px; left: 50%; animation-duration: 10s; animation-delay: 1s; }
         .bubble:nth-child(4) { width: 70px; height: 70px; left: 70%; animation-duration: 13s; animation-delay: 3s; }
-        .bubble:nth-child(5) { width: 300px; height: 300px; left: 90%; animation-duration: 16s; animation-delay: 4s; }
+        .bubble:nth-child(5) { width: 200px; height: 200px; left: 90%; animation-duration: 16s; animation-delay: 4s; }
         .bubble:nth-child(6) { width: 65px; height: 65px; left: 20%; animation-duration: 11s; animation-delay: 0.5s; }
         .bubble:nth-child(7) { width: 75px; height: 75px; left: 45%; animation-duration: 14s; animation-delay: 2.5s; }
 
@@ -650,7 +619,7 @@
 
         .welcome-btn, #startButton {
             padding: 12px 25px;
-            font-size: 1rem;
+            font-size: clamp(1rem, 4vw, 1.2rem);
             color: white;
             border: none;
             border-radius: 50px;
@@ -662,7 +631,6 @@
         #startButton {
             background: linear-gradient(45deg, #2ecc71, #27ae60);
             padding: 15px 40px;
-            font-size: 1.2rem;
             text-transform: uppercase;
         }
         .welcome-btn {
@@ -675,56 +643,56 @@
 
         /* --- MODAL --- */
         .modal {
-            display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%;
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.7); backdrop-filter: blur(5px); animation: fadeIn 0.3s ease;
-            align-items: center; justify-content: center;
+            align-items: center; justify-content: center; overflow-y: auto; padding: 15px;
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .modal-content {
-            margin: 5% auto; padding: 30px; border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3); width: 90%; max-width: 600px;
+            margin: 5% auto; padding: 20px; border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); width: 100%; max-width: 600px;
             position: relative;
         }
         .info-modal .modal-content {
             background: linear-gradient(to bottom, #ffffff, #eef2f3); color: #333; text-align: left;
         }
-        .info-modal h2 { text-align: center; color: #2c3e50; margin-top: 0; }
+        .info-modal h2 { text-align: center; color: #2c3e50; margin-top: 0; font-size: clamp(1.5rem, 5vw, 2rem); }
         .info-modal ul { padding-left: 20px; }
-        .info-modal li { margin-bottom: 10px; }
+        .info-modal li { margin-bottom: 10px; font-size: clamp(0.9rem, 3vw, 1rem); }
         .close {
             color: #aaa; font-size: 32px; font-weight: bold; cursor: pointer; transition: all 0.2s ease;
             position: absolute; top: 10px; right: 20px; z-index: 20;
         }
         .close:hover, .close:focus { color: #e74c3c; transform: rotate(90deg) scale(1.2); }
 
-        /* --- BARU: Style untuk Efek 3D Profile --- */
         .profile-pic-container {
-            perspective: 1000px; /* Penting untuk menciptakan ruang 3D */
-            border-radius: 50%;
-            flex-shrink: 0;
-            margin-right: 20px;
-            overflow: hidden;
+            display: none; /* Hide on small screens */
         }
-
-        .profile-pic-container img {
-            transition: transform 0.2s ease-out; /* Animasi halus saat mouse bergerak */
-            width: 150px;
-            height: 300px; /* Dibuat persegi agar lingkaran sempurna */
-            object-fit: cover; /* Menjaga aspek rasio gambar asli */
-            display: block;
+        @media (min-width: 768px) {
+            .profile-pic-container {
+                display: block;
+                perspective: 1000px;
+                border-radius: 50%;
+                flex-shrink: 0;
+                margin-right: 20px;
+                overflow: hidden;
+            }
+            .profile-pic-container img {
+                transition: transform 0.2s ease-out;
+                width: 100px;
+                height: 200px; /* Dibuat persegi agar lingkaran sempurna */
+                object-fit: cover;
+                display: block;
+            }
         }
-
-        /* --- BARU: Efek Hover untuk Ikon Media Sosial --- */
+        
         #pengembangModal .fab {
-            transition: transform 0.3s ease, color 0.3s ease; /* Transisi halus */
+            transition: transform 0.3s ease, color 0.3s ease;
         }
-
         #pengembangModal .fab:hover {
-            color: #F1C40F; /* Warna berubah menjadi kuning saat disentuh mouse */
-            animation: icon-wobble 0.6s ease-in-out; /* Menerapkan animasi bergoyang */
+            color: #F1C40F;
+            animation: icon-wobble 0.6s ease-in-out;
         }
-
-        /* Animasi untuk efek bergoyang */
         @keyframes icon-wobble {
             0% { transform: rotate(0deg) scale(1); }
             25% { transform: rotate(-15deg) scale(1.1); }
@@ -732,30 +700,42 @@
             75% { transform: rotate(-5deg) scale(1.1); }
             100% { transform: rotate(0deg) scale(1); }
         }
-        /* Style untuk gambar baru di sebelah kanan */
         .modal-bg-image {
-            position: absolute;
-            right: 10px; /* Sedikit digeser ke kanan agar lebih fokus ke bagian wajah */
-            top: 0;
-            height: 100%;
-            opacity: 0.15; /* Membuat gambar sangat transparan */
-            pointer-events: none; /* Penting! Agar gambar tidak bisa di-klik dan tidak menghalangi konten di depannya */
-            z-index: 1; /* Posisikan di belakang konten utama */
+            display: none; /* Hide decorative image on small screens */
+        }
+        @media (min-width: 768px) {
+            .modal-bg-image {
+                display: block;
+                position: absolute;
+                right: 10px;
+                top: 0;
+                height: 100%;
+                opacity: 0.15;
+                pointer-events: none;
+                z-index: 1;
+            }
         }
 
-        /* Konten utama (teks & foto kiri) diposisikan di atas gambar latar */
         .modal-main-content {
             position: relative;
-            z-index: 2; /* Pastikan konten ini ada di lapisan atas */
+            z-index: 2;
             display: flex;
+            flex-direction: column; /* Stack on small screens */
             align-items: center;
+            text-align: center; /* Center text on small screens */
             width: 100%;
+        }
+        @media (min-width: 768px) {
+            .modal-main-content {
+                flex-direction: row; /* Side by side on large screens */
+                text-align: left;
+            }
         }
 		
         /* --- Puzzle Game Styles --- */
         #game-area-puzzle {
             display: none;
-            flex-direction: column; /* Default ke kolom untuk tata letak umum */
+            flex-direction: column;
             align-items: center;
             gap: 15px;
             width: 100%;
@@ -763,18 +743,24 @@
 
         .puzzle-layout-container {
             display: flex;
-            flex-direction: row; /* Default ke baris untuk desktop */
+            flex-direction: column; /* Stack on small screens */
             justify-content: center;
-            align-items: flex-start; /* Sejajarkan ke atas */
+            align-items: center;
             width: 100%;
-            max-width: 900px; /* Sesuaikan lebar maksimum */
             gap: 20px;
-            flex-wrap: wrap; /* Izinkan wrap pada layar kecil */
+        }
+        @media (min-width: 900px) {
+            .puzzle-layout-container {
+                flex-direction: row; /* Side by side on large screens */
+                align-items: flex-start;
+                max-width: 900px;
+            }
         }
 
         .puzzle-left-panel {
-            flex: 1; /* Ambil proporsi ruang yang sama */
-            min-width: 250px; /* Lebar minimum untuk panel kiri */
+            flex: 1;
+            width: 100%;
+            max-width: 400px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -786,42 +772,37 @@
         }
 
         .puzzle-right-panel {
-            flex: 1; /* Ambil proporsi ruang yang sama */
+            flex: 2;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-width: 450px; /* Pastikan cukup lebar untuk puzzle grid */
+            width: 100%;
+            max-width: 460px; /* Set max-width */
         }
 
         .puzzle-container {
             display: grid;
-            grid-template-columns: repeat(3, 150px);
-            grid-template-rows: repeat(3, 150px);
+            width: 100%;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
             gap: 2px;
             border: 3px solid #333;
             border-radius: 8px;
             background-color: #333;
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            /* Hapus margin: 20px auto; karena sudah diatur oleh flexbox parent */
         }
 
         .puzzle-tile {
-            width: 150px;
-            height: 150px;
-            background-size: 450px 450px; /* Ensure background image covers the whole grid */
+            width: 100%;
+            padding-bottom: 100%; /* Aspect ratio 1:1 */
+            position: relative;
+            background-size: 300% 300%; /* Relative to the tile size */
             cursor: pointer;
             transition: transform 0.2s;
             border-radius: 5px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 36px;
-            font-weight: bold;
-            color: white;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
             user-select: none;
         }
-
+        
         .puzzle-tile:hover {
             transform: scale(1.03);
             box-shadow: 0 0 10px rgba(255,255,255,0.5);
@@ -839,7 +820,7 @@
         }
 
         #final-stats-puzzle {
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
             margin: 20px 0;
         }
 
@@ -847,25 +828,6 @@
             font-weight: bold;
             color: #2980B9;
         }
-
-        /* Responsif untuk layar kecil pada Level 4 */
-        @media (max-width: 768px) {
-            .puzzle-layout-container {
-                flex-direction: column; /* Ubah menjadi kolom pada layar kecil */
-                align-items: center; /* Pusatkan secara horizontal */
-            }
-
-            .puzzle-left-panel,
-            .puzzle-right-panel {
-                width: 100%; /* Ambil lebar penuh */
-                min-width: unset; /* Hapus batasan lebar minimum */
-            }
-            .puzzle-container {
-                /* Untuk layar yang lebih kecil, mungkin perlu menyesuaikan ukuran tile atau membiarkannya diskalakan secara relatif. */
-                /* Untuk saat ini, biarkan ukuran tetap 150px per tile */
-            }
-        }
-
     </style>
 </head>
 <body>
@@ -878,7 +840,6 @@
     <div class="bubble"></div>
     <div class="bubble"></div>
 	
-
     <div id="welcome-screen">
         <div class="welcome-title-group">
             <img src="https://lh3.googleusercontent.com/d/1ika4en9PFUa6aRIXKDbvQzil6bxIO5E9" alt="bangbin" class="welcome-image"> <h1>LETAK GEOGRAFIS</h1>
@@ -889,9 +850,9 @@
             <button id="petunjukBtn" class="btn-3d">Petunjuk</button>
             <button id="tujuanBtn" class="btn-3d">Tujuan</button>
 			<button id="sumberBtn" class="btn-3d">Sumber</button>
-			<a href="Pulau"><button class="btn-3d">Materi</button></a>			
+			<a href="Pulau.html"><button class="btn-3d">Materi</i></button></a>			
             <button id="pengembangBtn" class="btn-3d"><i class="fa fa-user"></i></button>			
-			<a href="https://sites.google.com/view/bangbinedu/home" target="_blank"><button class="btn-3d"><i class="fa fa-home"></i></button></a>
+			<a href="Pulau-Indonesia.html" target="_blank"><button class="btn-3d"><i class="fa fa-home"></i></button></a>
         </div>
     </div>
 
@@ -929,7 +890,6 @@
         <div class="modal-content">
             <span class="close">×</span>
             <h2>Sumber</h2>
-
 				<ul class="list-disc pl-5 text-left">
 					<li><strong>Kemdikbudristek</strong> - Ilmu Pengetahuan Alam dan Sosial untuk SD/MI Kelas V (Edisi Revisi) 2024.</li>
 					<li><strong>www.flaticon.com</strong> - asset gambar pulau Indonesia. diakses 12 Juli 2025.</li>
@@ -940,20 +900,17 @@
         </div>
     </div>
 
-
     <div id="pengembangModal" class="modal">
         <div class="modal-content" style="background: linear-gradient(135deg, #4e54c8, #8f94fb); max-width: 700px; padding: 25px;">
             <span class="close">×</span>
             <div class="modal-main-content">
                 <img src="https://lh3.googleusercontent.com/d/1ivUN8B8xdd4R8Kef_-wEqNx56_eeUv4w" alt="Background" class="modal-bg-image"> <div class="profile-pic-container">
-                    <img src="https://lh3.googleusercontent.com/d/1tFGMHXxFlkz5Ij0nHbxddt4aF-MfnTio" alt="Foto Profil"> </div>
-									
-
-                <div style="color: white; text-align: left; flex-grow: 1;">
-                    <h2 style="margin: 0; font-size: 1.5em;">BINTANG ADHI PERMANA</h2>
-                    <p style="margin: 5px 0; font-size: 0.9em;">SDN Lubang Buaya 01, Jakarta Timur</p>
-                    <p style="margin: 10px 0 5px 0; font-weight: bold; font-size: 0.9em;">Kontak:</p>
-                    <div style="font-size: 1.8em;">
+                    <img src="https://lh3.googleusercontent.com/d/1tFGMHXxFlkz5Ij0nHbxddt4aF-MfnTio" alt="Foto Profil" style="height: 150px;"> </div>
+                <div style="color: white; flex-grow: 1;">
+                    <h2 style="margin: 0; font-size: clamp(1.2em, 4vw, 1.5em);">BINTANG ADHI PERMANA</h2>
+                    <p style="margin: 5px 0; font-size: clamp(0.8em, 3vw, 0.9em);">SDN Lubang Buaya 01, Jakarta Timur</p>
+                    <p style="margin: 10px 0 5px 0; font-weight: bold; font-size: clamp(0.8em, 3vw, 0.9em);">Kontak:</p>
+                    <div style="font-size: clamp(1.5em, 6vw, 1.8em);">
                         <a href="https://www.facebook.com/bintang.a.permana.1/" target="_blank" style="margin-right: 15px; color: white; text-decoration: none;"><i class="fab fa-facebook"></i></a>
                         <a href="https://www.youtube.com/@Bangbin_1" target="_blank" style="margin-right: 15px; color: white; text-decoration: none;"><i class="fab fa-youtube"></i></a>
                         <a href="https://wa.me/6281310051985" target="_blank" style="color: white; text-decoration: none;"><i class="fab fa-whatsapp"></i></a>
@@ -1061,7 +1018,6 @@
             <a href="https://sites.google.com/view/bangbinedu/home" target="_blank"><button class="btn-3d"><i class="fa fa-home"></i></button></a>
         </div>
 
-        <!-- Puzzle Game (Level 4) moved inside main-container -->
         <div id="start-screen-puzzle" style="display: none;">
             <h1>Level 4: Puzzle Peta</h1>
             <p style="font-size: 1.2rem;">Susun potongan Peta Indonesia dengan benar! Geser potongan yang bersebelahan dengan kotak kosong.</p>
@@ -1293,7 +1249,8 @@ function renderPuzzleTiles() {
             const col = (value - 1) % 3;
             
             tile.style.backgroundImage = `url('${PUZZLE_IMAGE_URL}')`;
-            tile.style.backgroundPosition = `-${col * 150}px -${row * 150}px`;
+            // Calculate background position relative to the tile's size
+            tile.style.backgroundPosition = `${col * 50}% ${row * 50}%`;
         }
         
         tile.addEventListener('click', () => movePuzzleTile(index));
@@ -1750,7 +1707,6 @@ function endGamePuzzle(reason) {
         function setupGrid() {
             grid = Array(GRID_SIZE).fill(0).map(() => Array(GRID_SIZE).fill(''));
             actualbangbinGrid.innerHTML = '';
-            actualbangbinGrid.style.gridTemplateColumns = `repeat(${GRID_SIZE}, 1fr)`;
 
             placebangbinsInGrid();
             fillEmptyCells();
@@ -1761,7 +1717,8 @@ function endGamePuzzle(reason) {
                     cell.classList.add('bangbin-cell');
                     cell.dataset.row = r;
                     cell.dataset.col = c;
-                    cell.innerText = grid[r][c];
+                    cell.innerText = grid[r][c]; // CORRECTED: Set text directly
+
                     // Mouse events
                     cell.addEventListener('mousedown', onCellMouseDown);
                     cell.addEventListener('mouseenter', onCellMouseEnter);
@@ -1886,7 +1843,7 @@ function endGamePuzzle(reason) {
 
         function onCellMouseDown(e) {
             isSelecting = true;
-            const cell = e.target;
+            const cell = e.currentTarget;
             const row = parseInt(cell.dataset.row);
             const col = parseInt(cell.dataset.col);
             startCellCoords = { row, col };
@@ -1896,7 +1853,7 @@ function endGamePuzzle(reason) {
 
         function onCellMouseEnter(e) {
             if (!isSelecting || !startCellCoords) return;
-            const cell = e.target;
+            const cell = e.currentTarget;
             const row = parseInt(cell.dataset.row);
             const col = parseInt(cell.dataset.col);
 
@@ -1952,7 +1909,7 @@ function endGamePuzzle(reason) {
         function onCellTouchStart(e) {
             e.preventDefault();
             isSelecting = true;
-            const cell = e.target;
+            const cell = e.currentTarget;
             const row = parseInt(cell.dataset.row);
             const col = parseInt(cell.dataset.col);
             startCellCoords = { row, col };
